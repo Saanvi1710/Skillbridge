@@ -4,6 +4,7 @@ from dotenv import load_dotenv
 from supabase import create_client
 from routes.transcribe import router as transcribe_router
 from routes.extract import router as extract_router
+from routes.profile import router as profile_router
 import os
 
 load_dotenv()
@@ -12,7 +13,10 @@ app = FastAPI(title="SkillBridge API")
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:5173"],
+    allow_origins=[
+        "http://localhost:5173",
+        "https://skillbridge-app.vercel.app"  # add your vercel URL later
+    ],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -22,6 +26,7 @@ supabase = create_client(os.getenv("SUPABASE_URL"), os.getenv("SUPABASE_KEY"))
 
 app.include_router(transcribe_router)
 app.include_router(extract_router)
+app.include_router(profile_router)
 
 @app.get("/")
 def health_check():
