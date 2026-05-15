@@ -34,3 +34,13 @@ export async function saveProfile(profileData) {
   if (!response.ok) throw new Error("Save failed")
   return response.json()
 }
+
+export async function getJobMatches(skills, summary) {
+  const response = await fetch(`${BASE_URL}/match-jobs`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ skills, summary })
+  })
+  if (!response.ok) throw new Error("Matching failed")
+  return response.json()
+}

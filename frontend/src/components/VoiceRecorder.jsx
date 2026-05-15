@@ -1,5 +1,7 @@
 import { useState, useRef, useEffect } from "react"
 import { transcribeAudio, extractSkills, saveProfile } from "../services/api"
+import { useAuth } from "../context/AuthContext"
+import { useNavigate } from "react-router-dom"
 
 const STEPS = {
   IDLE: "idle",
@@ -93,6 +95,8 @@ export default function VoiceRecorder() {
   const [error, setError] = useState("")
   const [saved, setSaved] = useState(false)
   const [recordingTime, setRecordingTime] = useState(0)
+  const { user } = useAuth()
+  const navigate = useNavigate()
   const mediaRecorder = useRef(null)
   const audioChunks = useRef([])
   const timerRef = useRef(null)
@@ -154,8 +158,13 @@ export default function VoiceRecorder() {
 
   const handleSave = async () => {
     try {
-      await saveProfile({ transcript, ...profile })
+      const result = await saveProfile({
+        transcript,
+        ...profile,
+        user_id: user?.id
+      })
       setSaved(true)
+      setTimeout(() => navigate(`/jobs/${result.profile_id}`), 1000)
     } catch {
       setError("Failed to save profile.")
     }
