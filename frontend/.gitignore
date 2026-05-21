@@ -1,3 +1,22 @@
+# Environment variables - NEVER commit these
+backend/.env
+frontend/.env.development
+frontend/.env.production
+.env
+
+# Python
+backend/venv/
+backend/__pycache__/
+backend/**/__pycache__/
+*.pyc
+
+# Node
+node_modules
+frontend/node_modules/
+dist
+dist-ssr
+*.local
+
 # Logs
 logs
 *.log
@@ -7,12 +26,7 @@ yarn-error.log*
 pnpm-debug.log*
 lerna-debug.log*
 
-node_modules
-dist
-dist-ssr
-*.local
-
-# Editor directories and files
+# Editor
 .vscode/*
 !.vscode/extensions.json
 .idea
