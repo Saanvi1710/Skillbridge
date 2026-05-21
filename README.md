@@ -107,24 +107,34 @@ npm run dev
 ## Project Structure
 skillbridge/
 ├── backend/
-│   ├── main.py              # FastAPI app + CORS
-│   ├── routes/
-│   │   ├── transcribe.py    # Whisper STT endpoint
-│   │   ├── extract.py       # LLaMA skill extraction
-│   │   └── profile.py       # Save + fetch profiles
-│   ├── services/
-│   │   └── matcher.py       # Semantic job matching (ML)
+│   ├── main.py                 # FastAPI app + CORS config
 │   ├── requirements.txt
-│   └── .env.example
+│   ├── .env.example
+│   ├── routes/
+│   │   ├── transcribe.py       # Whisper STT endpoint
+│   │   ├── extract.py          # LLaMA skill extraction
+│   │   └── profile.py          # Save, fetch, match profiles
+│   └── services/
+│       └── matcher.py          # Semantic job matching (ML)
 ├── frontend/
-│   ├── src/
-│   │   ├── pages/           # Landing, Login, Dashboard, Record, Jobs, Profile
-│   │   ├── components/      # VoiceRecorder, ProtectedRoute
-│   │   ├── context/         # AuthContext (Google OAuth)
-│   │   └── services/        # api.js, supabase.js
-│   └── .env.example
+│   ├── .env.example
+│   └── src/
+│       ├── pages/
+│       │   ├── Landing.jsx     # Home page
+│       │   ├── Login.jsx       # Google OAuth
+│       │   ├── Dashboard.jsx   # User's saved profiles
+│       │   ├── Record.jsx      # Voice recording page
+│       │   ├── Jobs.jsx        # AI job matches
+│       │   └── Profile.jsx     # Public shareable profile
+│       ├── components/
+│       │   ├── VoiceRecorder.jsx   # Core recording + profile UI
+│       │   └── ProtectedRoute.jsx  # Auth guard
+│       ├── context/
+│       │   └── AuthContext.jsx     # Google OAuth state
+│       └── services/
+│           ├── api.js              # Backend API calls
+│           └── supabase.js         # Supabase client
 └── README.md
-
 ---
 
 ## Tradeoffs Made
