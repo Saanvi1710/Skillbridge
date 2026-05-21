@@ -105,6 +105,8 @@ npm run dev
 ---
 
 ## Project Structure
+
+```
 skillbridge/
 ├── backend/
 │   ├── main.py                 # FastAPI app + CORS config
@@ -135,7 +137,7 @@ skillbridge/
 │           ├── api.js              # Backend API calls
 │           └── supabase.js         # Supabase client
 └── README.md
----
+```
 
 ## Tradeoffs Made
 
