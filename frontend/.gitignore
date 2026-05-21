@@ -3,6 +3,7 @@ backend/.env
 frontend/.env.development
 frontend/.env.production
 .env
+*.env
 
 # Python
 backend/venv/
