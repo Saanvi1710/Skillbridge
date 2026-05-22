@@ -35,11 +35,11 @@ export async function saveProfile(profileData) {
   return response.json()
 }
 
-export async function getJobMatches(skills, summary) {
+export async function getJobMatches(skills, summary, work_domains = []) {
   const response = await fetch(`${BASE_URL}/match-jobs`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ skills, summary })
+    body: JSON.stringify({ skills, summary, work_domains })
   })
   if (!response.ok) throw new Error("Matching failed")
   return response.json()

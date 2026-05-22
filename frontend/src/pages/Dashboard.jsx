@@ -274,6 +274,22 @@ export default function Dashboard() {
                     }}
                   >
                     <button
+                      onClick={(e) => { e.stopPropagation(); navigate(`/jobs/${p.id}`) }}
+                      style={{
+                        padding: "4px 10px",
+                        background: "linear-gradient(135deg, #f97316, #ea580c)",
+                        border: "none",
+                        borderRadius: "6px",
+                        color: "#fff",
+                        fontSize: "12px",
+                        fontWeight: 600,
+                        cursor: "pointer"
+                      }}
+                    >
+                      Find Jobs
+                    </button>
+
+                    <button
                       onClick={(e) => handleDelete(e, p.id)}
                       style={{
                         padding: "4px 10px",

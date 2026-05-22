@@ -65,7 +65,8 @@ async def get_job_matches(data: dict):
     try:
         skills = data.get("skills", [])
         summary = data.get("summary", "")
-        matches = match_jobs(skills, summary)
+        work_domains = data.get("work_domains", [])
+        matches = await match_jobs(skills, summary, work_domains)
         return {"matches": matches}
     except Exception as e:
         print(f"MATCH ERROR: {e}")
