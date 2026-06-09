@@ -83,7 +83,7 @@ def _score_jobs(jobs: list, profile_text: str, top_k: int) -> list:
     return results
 
 
-async def match_jobs(profile_skills: list, profile_summary: str, work_domains: list = None, top_k: int = 50):
+async def match_jobs(profile_skills: list, profile_summary: str, work_domains: list = None, top_k: int = 50, city: str = None):
     """
     Main matching function:
     1. Fetch real jobs from Adzuna + Jooble
@@ -94,7 +94,7 @@ async def match_jobs(profile_skills: list, profile_summary: str, work_domains: l
     work_domains = work_domains or []
 
     # Try fetching real jobs
-    real_jobs = await fetch_real_jobs(profile_skills, profile_summary, work_domains)
+    real_jobs = await fetch_real_jobs(profile_skills, profile_summary, work_domains, city)
 
     if real_jobs and len(real_jobs) >= 3:
         # Score real jobs

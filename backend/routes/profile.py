@@ -1,36 +1,54 @@
-from fastapi import APIRouter, HTTPException
-from pydantic import BaseModel
-from supabase import create_client
+from fastapi import APIRouter, HTTPException, Depends, Request
+from pydantic import BaseModel, Field
+from supabase import Client
 import os
+from deps import get_supabase, verify_token
+from limiter import limiter
 from typing import Optional, List
 from services.matcher import match_jobs
 
 router = APIRouter()
 
 class ProfileData(BaseModel):
-    transcript: str
+    transcript: str = Field(..., max_length=10000)
     skills: List[str]
     years_experience: dict
     tools_used: List[str]
     work_domains: List[str]
     languages_spoken: List[str]
-    summary: str
-    name: Optional[str] = None
+    summary: str = Field(..., max_length=2000)
+    name: Optional[str] = Field(None, max_length=100)
+    age: Optional[int] = None
+    gender: Optional[str] = Field(None, max_length=20)
+    phone: Optional[str] = Field(None, max_length=20)
+    city: Optional[str] = Field(None, max_length=100)
+    allow_contact: Optional[bool] = True
     user_id: Optional[str] = None  # from logged-in user
 
-@router.post("/save-profile")
-async def save_profile(data: ProfileData):
-    supabase = create_client(os.getenv("SUPABASE_URL"), os.getenv("SUPABASE_KEY"))
-    try:
-        user_id = data.user_id
+class MatchRequest(BaseModel):
+    skills: List[str]
+    summary: str
+    work_domains: Optional[List[str]] = []
+    city: Optional[str] = None
 
-        # If no user_id passed, create anonymous user
-        if not user_id:
-            user_result = supabase.table("users").insert({
-                "name": data.name or "Anonymous",
-                "preferred_language": "hi"
+@router.post("/save-profile")
+@limiter.limit("10/minute")
+async def save_profile(request: Request, data: ProfileData, user_id: str = Depends(verify_token), supabase: Client = Depends(get_supabase)):
+    try:
+        # Ensure user exists in public.users and update details
+        try:
+            supabase.table("users").upsert({
+                "id": user_id,
+                "name": data.name or "User",
+                "age": data.age,
+                "gender": data.gender,
+                "phone": data.phone,
+                "city": data.city,
+                "allow_contact": data.allow_contact,
+                "preferred_language": "en"
             }).execute()
-            user_id = user_result.data[0]["id"]
+        except Exception:
+            pass # might already exist or trigger handles it
 
         # Save profile linked to user
         profile_result = supabase.table("profiles").insert({
@@ -47,27 +65,45 @@ async def save_profile(data: ProfileData):
 
     except Exception as e:
         print(f"SAVE ERROR: {e}")
-        raise HTTPException(status_code=500, detail=str(e))
+        raise HTTPException(status_code=500, detail="An internal error occurred while saving the profile.")
 
 @router.get("/profile/{profile_id}")
-async def get_profile(profile_id: str):
-    supabase = create_client(os.getenv("SUPABASE_URL"), os.getenv("SUPABASE_KEY"))
+@limiter.limit("30/minute")
+async def get_profile(request: Request, profile_id: str, supabase: Client = Depends(get_supabase)):
     try:
+        # Get profile
         result = supabase.table("profiles").select("*").eq("id", profile_id).execute()
         if not result.data:
             raise HTTPException(status_code=404, detail="Profile not found")
-        return result.data[0]
+        
+        profile_data = result.data[0]
+        
+        # Get user details (EXCLUDE PHONE for public privacy)
+        user_result = supabase.table("users").select("name, age, gender, city").eq("id", profile_data["user_id"]).execute()
+        if user_result.data:
+            profile_data["name"] = user_result.data[0].get("name")
+            profile_data["age"] = user_result.data[0].get("age")
+            profile_data["gender"] = user_result.data[0].get("gender")
+            profile_data["city"] = user_result.data[0].get("city")
+            
+        return profile_data
+    except HTTPException as he:
+        raise he
     except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+        print(f"GET PROFILE ERROR: {e}")
+        raise HTTPException(status_code=500, detail="An internal error occurred while retrieving the profile.")
     
 @router.post("/match-jobs")
-async def get_job_matches(data: dict):
+@limiter.limit("10/minute")
+async def get_job_matches(request: Request, req: MatchRequest, user_id: str = Depends(verify_token)):
     try:
-        skills = data.get("skills", [])
-        summary = data.get("summary", "")
-        work_domains = data.get("work_domains", [])
-        matches = await match_jobs(skills, summary, work_domains)
+        matches = await match_jobs(
+            profile_skills=req.skills,
+            profile_summary=req.summary,
+            work_domains=req.work_domains,
+            city=req.city
+        )
         return {"matches": matches}
     except Exception as e:
         print(f"MATCH ERROR: {e}")
-        raise HTTPException(status_code=500, detail=str(e))
+        raise HTTPException(status_code=500, detail="An internal error occurred during job matching.")

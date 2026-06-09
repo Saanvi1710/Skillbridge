@@ -80,9 +80,29 @@ export default function Profile() {
               {domains[0]?.[0] || "👤"}
             </div>
             <div>
-              <h1 style={{ fontSize: "18px", fontWeight: 600, margin: "0 0 4px" }}>
-                {domains[0] || "Skilled Professional"}
-              </h1>
+              <div style={{ display: "flex", alignItems: "center", gap: "8px", flexWrap: "wrap", marginBottom: "4px" }}>
+                <h1 style={{ fontSize: "20px", fontWeight: 600, margin: 0, color: "#f9fafb" }}>
+                  {profile.name || "Skilled Professional"}
+                </h1>
+                {profile.age && (
+                  <span style={{ fontSize: "12px", padding: "2px 8px", background: "#1f2937", borderRadius: "999px", color: "#d1d5db" }}>
+                    {profile.age} yrs
+                  </span>
+                )}
+                {profile.gender && (
+                  <span style={{ fontSize: "12px", padding: "2px 8px", background: "#1f2937", borderRadius: "999px", color: "#d1d5db" }}>
+                    {profile.gender}
+                  </span>
+                )}
+                {profile.city && (
+                  <span style={{ fontSize: "12px", padding: "2px 8px", background: "#1f2937", borderRadius: "999px", color: "#d1d5db" }}>
+                    📍 {profile.city}
+                  </span>
+                )}
+              </div>
+              <p style={{ fontSize: "14px", color: "#9ca3af", margin: "0 0 4px", fontWeight: 500 }}>
+                {domains[0] || "Professional Worker"}
+              </p>
               <p style={{ fontSize: "13px", color: "#6b7280", margin: 0 }}>
                 {profile.years_experience?.total
                   ? `${profile.years_experience.total} years experience`

@@ -1,16 +1,19 @@
-from fastapi import APIRouter, HTTPException
-from pydantic import BaseModel
+from fastapi import APIRouter, HTTPException, Depends, Request
+from pydantic import BaseModel, Field
 from groq import Groq
 import os
 import json
+from deps import verify_token
+from limiter import limiter
 
 router = APIRouter()
 
 class TranscriptInput(BaseModel):
-    transcript: str
+    transcript: str = Field(..., max_length=10000)
 
 @router.post("/extract-skills")
-async def extract_skills(data: TranscriptInput):
+@limiter.limit("5/minute")
+async def extract_skills(request: Request, data: TranscriptInput, user_id: str = Depends(verify_token)):
     client = Groq(api_key=os.getenv("GROQ_API_KEY"))
     
     prompt = f"""You are helping informal workers in India create professional profiles.
@@ -62,6 +65,8 @@ Rules:
         return parsed
 
     except json.JSONDecodeError as e:
-        raise HTTPException(status_code=500, detail=f"JSON parse error: {str(e)}")
+        print(f"JSON parse error: {str(e)}")
+        raise HTTPException(status_code=500, detail="Failed to parse extraction results.")
     except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+        print(f"EXTRACT ERROR: {e}")
+        raise HTTPException(status_code=500, detail="An internal error occurred during skill extraction.")

@@ -12,20 +12,45 @@ export default function Jobs() {
 
   const itemsPerPage = 10
 
+  const [searchType, setSearchType] = useState("local") // "local" or "anywhere"
+
+  const fetchJobs = async (profileData, locationType) => {
+    setLoading(true)
+    const skills = profileData.raw_skills?.skills || []
+    const summary = profileData.generated_summary || ""
+    const work_domains = profileData.work_domains || []
+    const city = locationType === "local" && profileData.city ? profileData.city : null
+    
+    try {
+      const { matches } = await getJobMatches(skills, summary, work_domains, city)
+      setJobs(matches)
+    } catch (e) {
+      console.error(e)
+    }
+    setLoading(false)
+  }
+
   useEffect(() => {
     fetch(`${import.meta.env.VITE_API_URL}/profile/${profileId}`)
       .then(r => r.json())
-      .then(async (data) => {
+      .then(data => {
         setProfile(data)
-        const skills = data.raw_skills?.skills || []
-        const summary = data.generated_summary || ""
-        const work_domains = data.work_domains || []
-        const { matches } = await getJobMatches(skills, summary, work_domains)
-        setJobs(matches)
-        setLoading(false)
+        // Auto-select "anywhere" if user has no city
+        if (!data.city) {
+          setSearchType("anywhere")
+          fetchJobs(data, "anywhere")
+        } else {
+          fetchJobs(data, "local")
+        }
       })
       .catch(() => setLoading(false))
   }, [profileId])
+
+  const handleToggle = (type) => {
+    if (type === searchType || !profile) return
+    setSearchType(type)
+    fetchJobs(profile, type)
+  }
 
   const sourceLabel = (source) => {
     switch (source) {
@@ -53,11 +78,18 @@ export default function Jobs() {
           <span>🎙</span>
           <span style={{ fontWeight: 600 }}>SkillBridge</span>
         </div>
-        <button onClick={() => navigate("/dashboard")} style={{
-          padding: "6px 14px", background: "transparent",
-          border: "1px solid #1e293b", borderRadius: "8px",
-          color: "#6b7280", fontSize: "13px", cursor: "pointer"
-        }}>Dashboard</button>
+        <div style={{ display: "flex", gap: "8px" }}>
+          <button onClick={() => navigate(`/profile/${profileId}`)} style={{
+            padding: "6px 14px", background: "transparent",
+            border: "1px solid #1e293b", borderRadius: "8px",
+            color: "#93c5fd", fontSize: "13px", cursor: "pointer"
+          }}>View Profile</button>
+          <button onClick={() => navigate("/dashboard")} style={{
+            padding: "6px 14px", background: "transparent",
+            border: "1px solid #1e293b", borderRadius: "8px",
+            color: "#6b7280", fontSize: "13px", cursor: "pointer"
+          }}>Dashboard</button>
+        </div>
       </div>
 
       <div style={{ maxWidth: "480px", margin: "0 auto" }}>
@@ -69,6 +101,39 @@ export default function Jobs() {
             Ranked by AI similarity to your profile
           </p>
         </div>
+
+        {/* Location Toggle */}
+        {profile?.city && (
+          <div style={{
+            display: "flex", background: "#0f172a", borderRadius: "10px",
+            padding: "4px", marginBottom: "20px", border: "1px solid #1e293b"
+          }}>
+            <button
+              onClick={() => handleToggle("local")}
+              style={{
+                flex: 1, padding: "8px 0", borderRadius: "8px", border: "none",
+                background: searchType === "local" ? "#1e293b" : "transparent",
+                color: searchType === "local" ? "#f9fafb" : "#6b7280",
+                fontSize: "13px", fontWeight: searchType === "local" ? 600 : 500,
+                cursor: "pointer", transition: "all 0.2s"
+              }}
+            >
+              Only in {profile.city}
+            </button>
+            <button
+              onClick={() => handleToggle("anywhere")}
+              style={{
+                flex: 1, padding: "8px 0", borderRadius: "8px", border: "none",
+                background: searchType === "anywhere" ? "#1e293b" : "transparent",
+                color: searchType === "anywhere" ? "#f9fafb" : "#6b7280",
+                fontSize: "13px", fontWeight: searchType === "anywhere" ? 600 : 500,
+                cursor: "pointer", transition: "all 0.2s"
+              }}
+            >
+              Anywhere in India
+            </button>
+          </div>
+        )}
 
         {/* Real-time indicator */}
         {!loading && jobs.length > 0 && jobs[0].source !== "skillbridge" && (
@@ -172,7 +237,7 @@ export default function Jobs() {
                     </div>
                     {job.apply_url ? (
                       <a
-                        href={job.apply_url}
+                        href={job.apply_url.toLowerCase().startsWith("javascript:") ? "#" : job.apply_url}
                         target="_blank"
                         rel="noopener noreferrer"
                         style={{
@@ -257,14 +322,7 @@ export default function Jobs() {
           </div>
         )}
 
-        <div style={{ marginTop: "24px", textAlign: "center" }}>
-          <span
-            onClick={() => navigate(`/profile/${profileId}`)}
-            style={{ fontSize: "13px", color: "#4b5563", cursor: "pointer", textDecoration: "underline" }}
-          >
-            View your public profile →
-          </span>
-        </div>
+
       </div>
     </div>
   )

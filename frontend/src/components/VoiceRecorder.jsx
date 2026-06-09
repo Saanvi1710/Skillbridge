@@ -92,8 +92,10 @@ export default function VoiceRecorder() {
   const [step, setStep] = useState(STEPS.IDLE)
   const [transcript, setTranscript] = useState("")
   const [profile, setProfile] = useState(null)
+  const [basicDetails, setBasicDetails] = useState({ name: "", age: "", gender: "", phone: "", city: "", allow_contact: true })
   const [error, setError] = useState("")
   const [saved, setSaved] = useState(false)
+  const [savedProfileId, setSavedProfileId] = useState(null)
   const [recordingTime, setRecordingTime] = useState(0)
   const { user } = useAuth()
   const navigate = useNavigate()
@@ -110,6 +112,12 @@ export default function VoiceRecorder() {
     }
     return () => clearInterval(timerRef.current)
   }, [step])
+
+  useEffect(() => {
+    if (user?.user_metadata?.full_name) {
+      setBasicDetails(prev => ({ ...prev, name: user.user_metadata.full_name }))
+    }
+  }, [user])
 
   const formatTime = (s) => `${String(Math.floor(s / 60)).padStart(2, "0")}:${String(s % 60).padStart(2, "0")}`
 
@@ -131,6 +139,7 @@ export default function VoiceRecorder() {
       setError("")
       setProfile(null)
       setSaved(false)
+      setSavedProfileId(null)
     } catch {
       setError("Microphone access denied. Please allow microphone in browser settings.")
     }
@@ -157,14 +166,29 @@ export default function VoiceRecorder() {
   }
 
   const handleSave = async () => {
+    if (!basicDetails.name || !basicDetails.phone || !basicDetails.city) {
+      setError("Please fill in your Name, Phone Number, and City before saving.")
+      return
+    }
+    if (basicDetails.phone.length !== 10) {
+      setError("Please enter a valid 10-digit phone number.")
+      return
+    }
+    setError("")
     try {
       const result = await saveProfile({
         transcript,
         ...profile,
+        name: basicDetails.name || undefined,
+        age: basicDetails.age ? parseInt(basicDetails.age, 10) : undefined,
+        gender: basicDetails.gender || undefined,
+        phone: basicDetails.phone || undefined,
+        city: basicDetails.city || undefined,
+        allow_contact: basicDetails.allow_contact,
         user_id: user?.id
       })
+      setSavedProfileId(result.profile_id)
       setSaved(true)
-      setTimeout(() => navigate(`/jobs/${result.profile_id}`), 1000)
     } catch {
       setError("Failed to save profile.")
     }
@@ -176,6 +200,7 @@ export default function VoiceRecorder() {
     setProfile(null)
     setError("")
     setSaved(false)
+    setSavedProfileId(null)
   }
 
   const isProcessing = step === STEPS.TRANSCRIBING || step === STEPS.EXTRACTING
@@ -482,26 +507,114 @@ export default function VoiceRecorder() {
           </div>
         )}
 
-        {/* Action Buttons */}
+        {/* Basic Details Form */}
         {step === STEPS.DONE && (
+          <div style={{
+            background: "#0f172a",
+            border: "1px solid #1e293b",
+            borderRadius: "20px",
+            padding: "24px",
+            marginBottom: "24px"
+          }}>
+            <h3 style={{ fontSize: "16px", fontWeight: 600, margin: "0 0 16px", color: "#f9fafb" }}>Basic Details</h3>
+            <div style={{ display: "flex", flexDirection: "column", gap: "16px" }}>
+              <div>
+                <label style={{ display: "block", fontSize: "12px", color: "#9ca3af", marginBottom: "6px" }}>Full Name</label>
+                <input 
+                  type="text" 
+                  value={basicDetails.name}
+                  onChange={(e) => setBasicDetails({...basicDetails, name: e.target.value})}
+                  placeholder="Enter your name"
+                  style={{ width: "100%", padding: "10px 14px", borderRadius: "10px", background: "#030712", border: "1px solid #1e293b", color: "#fff", fontSize: "14px" }}
+                />
+              </div>
+              <div style={{ display: "flex", gap: "12px" }}>
+                <div style={{ flex: 1 }}>
+                  <label style={{ display: "block", fontSize: "12px", color: "#9ca3af", marginBottom: "6px" }}>Age</label>
+                  <input 
+                    type="number" 
+                    value={basicDetails.age}
+                    onChange={(e) => setBasicDetails({...basicDetails, age: e.target.value})}
+                    placeholder="e.g. 28"
+                    style={{ width: "100%", padding: "10px 14px", borderRadius: "10px", background: "#030712", border: "1px solid #1e293b", color: "#fff", fontSize: "14px" }}
+                  />
+                </div>
+                <div style={{ flex: 1 }}>
+                  <label style={{ display: "block", fontSize: "12px", color: "#9ca3af", marginBottom: "6px" }}>Gender</label>
+                  <select 
+                    value={basicDetails.gender}
+                    onChange={(e) => setBasicDetails({...basicDetails, gender: e.target.value})}
+                    style={{ width: "100%", padding: "10px 14px", borderRadius: "10px", background: "#030712", border: "1px solid #1e293b", color: "#fff", fontSize: "14px", appearance: "none" }}
+                  >
+                    <option value="">Select</option>
+                    <option value="Male">Male</option>
+                    <option value="Female">Female</option>
+                    <option value="Other">Other</option>
+                  </select>
+                </div>
+              </div>
+              <div style={{ display: "flex", gap: "12px" }}>
+                <div style={{ flex: 1 }}>
+                  <label style={{ display: "block", fontSize: "12px", color: "#9ca3af", marginBottom: "6px" }}>Phone Number</label>
+                  <input 
+                    type="tel" 
+                    value={basicDetails.phone}
+                    onChange={(e) => {
+                      const val = e.target.value.replace(/\D/g, '')
+                      if (val.length <= 10) setBasicDetails({...basicDetails, phone: val})
+                    }}
+                    maxLength={10}
+                    placeholder="10-digit mobile number"
+                    style={{ width: "100%", padding: "10px 14px", borderRadius: "10px", background: "#030712", border: "1px solid #1e293b", color: "#fff", fontSize: "14px" }}
+                  />
+                </div>
+                <div style={{ flex: 1 }}>
+                  <label style={{ display: "block", fontSize: "12px", color: "#9ca3af", marginBottom: "6px" }}>City / Location</label>
+                  <input 
+                    type="text" 
+                    value={basicDetails.city}
+                    onChange={(e) => setBasicDetails({...basicDetails, city: e.target.value})}
+                    placeholder="e.g. Mumbai"
+                    style={{ width: "100%", padding: "10px 14px", borderRadius: "10px", background: "#030712", border: "1px solid #1e293b", color: "#fff", fontSize: "14px" }}
+                  />
+                </div>
+              </div>
+              
+              {/* Consent Checkbox */}
+              <label style={{ display: "flex", alignItems: "flex-start", gap: "10px", cursor: "pointer", marginTop: "4px" }}>
+                <input 
+                  type="checkbox" 
+                  checked={basicDetails.allow_contact}
+                  onChange={(e) => setBasicDetails({...basicDetails, allow_contact: e.target.checked})}
+                  style={{ marginTop: "3px", accentColor: "#f97316" }}
+                />
+                <span style={{ fontSize: "12px", color: "#9ca3af", lineHeight: 1.5 }}>
+                  Allow verified employers to contact me by phone. (Your number remains hidden on your public profile).
+                </span>
+              </label>
+            </div>
+          </div>
+        )}
+
+        {/* Action Buttons */}
+        {step === STEPS.DONE && !saved && (
           <div style={{ display: "flex", gap: "10px" }}>
             <button
               onClick={handleSave}
-              disabled={saved}
               style={{
                 flex: 1,
                 padding: "14px",
                 borderRadius: "14px",
                 border: "none",
-                cursor: saved ? "default" : "pointer",
-                background: saved ? "#052e16" : "linear-gradient(135deg, #16a34a, #15803d)",
-                color: saved ? "#4ade80" : "#fff",
+                cursor: "pointer",
+                background: "linear-gradient(135deg, #16a34a, #15803d)",
+                color: "#fff",
                 fontSize: "14px",
                 fontWeight: 600,
                 transition: "all 0.2s"
               }}
             >
-              {saved ? "✓ Saved" : "Save Profile"}
+              Save Profile
             </button>
             <button
               onClick={reset}
@@ -520,6 +633,55 @@ export default function VoiceRecorder() {
             >
               Record Again
             </button>
+          </div>
+        )}
+
+        {/* Post-Save Actions */}
+        {step === STEPS.DONE && saved && (
+          <div style={{
+            background: "#052e16",
+            border: "1px solid #166534",
+            borderRadius: "20px",
+            padding: "24px",
+            marginBottom: "24px",
+            textAlign: "center"
+          }}>
+            <h3 style={{ fontSize: "18px", color: "#4ade80", margin: "0 0 16px" }}>🎉 Profile Saved Successfully!</h3>
+            <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
+              <button
+                onClick={() => navigate(`/jobs/${savedProfileId}`)}
+                style={{
+                  width: "100%", padding: "14px", borderRadius: "12px", border: "none",
+                  background: "linear-gradient(135deg, #f97316, #ea580c)", color: "#fff",
+                  fontSize: "15px", fontWeight: 600, cursor: "pointer", transition: "opacity 0.2s"
+                }}
+                onMouseOver={e => e.target.style.opacity = "0.9"}
+                onMouseOut={e => e.target.style.opacity = "1"}
+              >
+                🔍 Find Matching Jobs
+              </button>
+              <button
+                onClick={() => navigate(`/profile/${savedProfileId}`)}
+                style={{
+                  width: "100%", padding: "14px", borderRadius: "12px", border: "1px solid #1e293b",
+                  background: "#0f172a", color: "#f9fafb",
+                  fontSize: "15px", fontWeight: 500, cursor: "pointer", transition: "background 0.2s"
+                }}
+                onMouseOver={e => e.target.style.background = "#1e293b"}
+                onMouseOut={e => e.target.style.background = "#0f172a"}
+              >
+                👁️ View Public Profile
+              </button>
+              <button
+                onClick={reset}
+                style={{
+                  width: "100%", padding: "10px", border: "none", background: "transparent",
+                  color: "#9ca3af", fontSize: "13px", cursor: "pointer", marginTop: "8px"
+                }}
+              >
+                + Record Another Profile
+              </button>
+            </div>
           </div>
         )}
 

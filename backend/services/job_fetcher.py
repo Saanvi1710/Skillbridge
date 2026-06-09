@@ -197,7 +197,7 @@ async def fetch_jsearch_jobs(query: str, location: str = "India") -> list[dict]:
                 "title": item.get("job_title", ""),
                 "company": item.get("employer_name", "Unknown"),
                 "location": f"{item.get('job_city', '')} {item.get('job_state', '')}".strip() or "India",
-                "type": item.get("job_employment_type", "Full-time").capitalize().replace("_", "-"),
+                "type": (item.get("job_employment_type") or "Full-time").capitalize().replace("_", "-"),
                 "description": item.get("job_description", "")[:300],
                 "apply_url": item.get("job_apply_link", ""),
                 "source": "jsearch",
@@ -229,7 +229,7 @@ def deduplicate_jobs(jobs: list[dict]) -> list[dict]:
 # 5. Main orchestrator
 # ─────────────────────────────────────────────────
 
-async def fetch_real_jobs(skills: list, summary: str, work_domains: list) -> list[dict]:
+async def fetch_real_jobs(skills: list, summary: str, work_domains: list, city: str = None) -> list[dict]:
     """
     Main entry point:
     1. Generate smart search keywords from user skills
@@ -242,12 +242,16 @@ async def fetch_real_jobs(skills: list, summary: str, work_domains: list) -> lis
     queries = generate_search_queries(skills, summary, work_domains)
     print(f"[job_fetcher] Generated search queries: {queries}")
 
+    # Use city if provided, otherwise default to India
+    search_location = city if city else ""
+    jooble_jsearch_location = city if city else "India"
+
     # Step 2: Fetch from APIs for each query (in parallel)
     tasks = []
     for q in queries:
-        tasks.append(fetch_adzuna_jobs(q))
-        tasks.append(fetch_jooble_jobs(q))
-        tasks.append(fetch_jsearch_jobs(q))
+        tasks.append(fetch_adzuna_jobs(q, location=search_location))
+        tasks.append(fetch_jooble_jobs(q, location=jooble_jsearch_location))
+        tasks.append(fetch_jsearch_jobs(q, location=jooble_jsearch_location))
 
     results = await asyncio.gather(*tasks, return_exceptions=True)
 
