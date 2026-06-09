@@ -2,6 +2,8 @@ from fastapi import APIRouter, HTTPException, Depends, Request
 from pydantic import BaseModel, Field
 from supabase import Client
 import os
+import secrets
+import string
 from deps import get_supabase, verify_token
 from limiter import limiter
 from typing import Optional, List
@@ -23,7 +25,6 @@ class ProfileData(BaseModel):
     phone: Optional[str] = Field(None, max_length=20)
     city: Optional[str] = Field(None, max_length=100)
     allow_contact: Optional[bool] = True
-    user_id: Optional[str] = None  # from logged-in user
 
 class MatchRequest(BaseModel):
     skills: List[str]
@@ -61,7 +62,15 @@ async def save_profile(request: Request, data: ProfileData, user_id: str = Depen
         }).execute()
 
         profile_id = profile_result.data[0]["id"]
-        return {"success": True, "profile_id": profile_id, "user_id": user_id}
+        
+        # Generate random slug for public sharing
+        slug = ''.join(secrets.choice(string.ascii_letters + string.digits) for _ in range(12))
+        supabase.table("profile_shares").insert({
+            "profile_id": profile_id,
+            "slug": slug
+        }).execute()
+
+        return {"success": True, "profile_id": profile_id, "user_id": user_id, "share_slug": slug}
 
     except Exception as e:
         print(f"[profile] /save-profile encountered an error.")
@@ -107,3 +116,33 @@ async def get_job_matches(request: Request, req: MatchRequest, user_id: str = De
     except Exception as e:
         print(f"[profile] /match-jobs encountered an error.")
         raise HTTPException(status_code=500, detail="An internal error occurred during job matching.")
+
+@router.get("/share/{slug}")
+@limiter.limit("30/minute")
+async def get_shared_profile(request: Request, slug: str, supabase: Client = Depends(get_supabase)):
+    try:
+        share_result = supabase.table("profile_shares").select("profile_id, is_active").eq("slug", slug).execute()
+        if not share_result.data or not share_result.data[0].get("is_active"):
+            raise HTTPException(status_code=404, detail="Shared profile not found or inactive")
+            
+        profile_id = share_result.data[0]["profile_id"]
+        result = supabase.table("profiles").select("*").eq("id", profile_id).execute()
+        if not result.data:
+            raise HTTPException(status_code=404, detail="Profile not found")
+        
+        profile_data = result.data[0]
+        
+        # Get user details safely (EXCLUDE PHONE)
+        user_result = supabase.table("users").select("name, age, gender, city").eq("id", profile_data["user_id"]).execute()
+        if user_result.data:
+            profile_data["name"] = user_result.data[0].get("name")
+            profile_data["age"] = user_result.data[0].get("age")
+            profile_data["gender"] = user_result.data[0].get("gender")
+            profile_data["city"] = user_result.data[0].get("city")
+            
+        return profile_data
+    except HTTPException as he:
+        raise he
+    except Exception as e:
+        print(f"[profile] /share/slug encountered an error.")
+        raise HTTPException(status_code=500, detail="An internal error occurred while retrieving the shared profile.")

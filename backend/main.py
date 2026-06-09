@@ -1,4 +1,4 @@
-from fastapi import FastAPI, Request, Response
+from fastapi import FastAPI, Request, Response, Depends
 from fastapi.middleware.cors import CORSMiddleware
 from dotenv import load_dotenv
 from slowapi import _rate_limit_exceeded_handler
@@ -7,9 +7,19 @@ from limiter import limiter
 from routes.transcribe import router as transcribe_router
 from routes.extract import router as extract_router
 from routes.profile import router as profile_router
+from deps import get_supabase
 import os
+import sentry_sdk
 
 load_dotenv()
+
+sentry_dsn = os.getenv("SENTRY_DSN")
+if sentry_dsn:
+    sentry_sdk.init(
+        dsn=sentry_dsn,
+        traces_sample_rate=1.0,
+        profiles_sample_rate=1.0,
+    )
 
 app = FastAPI(title="SkillBridge API")
 app.state.limiter = limiter
@@ -40,5 +50,18 @@ app.include_router(extract_router)
 app.include_router(profile_router)
 
 @app.get("/")
-def health_check():
+def home():
     return {"status": "ok", "message": "SkillBridge API is running"}
+
+@app.get("/health")
+def health_check():
+    return {"status": "healthy"}
+
+@app.get("/ready")
+def ready_check(supabase=Depends(get_supabase)):
+    try:
+        # Check DB connectivity
+        supabase.table("users").select("id").limit(1).execute()
+        return {"status": "ready"}
+    except Exception:
+        return Response(status_code=503, content="Service Unavailable")
