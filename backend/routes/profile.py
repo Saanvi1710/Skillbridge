@@ -47,8 +47,8 @@ async def save_profile(request: Request, data: ProfileData, user_id: str = Depen
                 "allow_contact": data.allow_contact,
                 "preferred_language": "en"
             }).execute()
-        except Exception:
-            pass # might already exist or trigger handles it
+        except Exception as db_err:
+            print(f"[profile] DB upsert failed for user, continuing anyway.")
 
         # Save profile linked to user
         profile_result = supabase.table("profiles").insert({
@@ -64,7 +64,7 @@ async def save_profile(request: Request, data: ProfileData, user_id: str = Depen
         return {"success": True, "profile_id": profile_id, "user_id": user_id}
 
     except Exception as e:
-        print(f"SAVE ERROR: {e}")
+        print(f"[profile] /save-profile encountered an error.")
         raise HTTPException(status_code=500, detail="An internal error occurred while saving the profile.")
 
 @router.get("/profile/{profile_id}")
@@ -90,7 +90,7 @@ async def get_profile(request: Request, profile_id: str, supabase: Client = Depe
     except HTTPException as he:
         raise he
     except Exception as e:
-        print(f"GET PROFILE ERROR: {e}")
+        print(f"[profile] /profile/id encountered an error.")
         raise HTTPException(status_code=500, detail="An internal error occurred while retrieving the profile.")
     
 @router.post("/match-jobs")
@@ -105,5 +105,5 @@ async def get_job_matches(request: Request, req: MatchRequest, user_id: str = De
         )
         return {"matches": matches}
     except Exception as e:
-        print(f"MATCH ERROR: {e}")
+        print(f"[profile] /match-jobs encountered an error.")
         raise HTTPException(status_code=500, detail="An internal error occurred during job matching.")

@@ -68,5 +68,5 @@ Rules:
         print(f"JSON parse error: {str(e)}")
         raise HTTPException(status_code=500, detail="Failed to parse extraction results.")
     except Exception as e:
-        print(f"EXTRACT ERROR: {e}")
+        print(f"[extract] /extract-skills encountered an error.")
         raise HTTPException(status_code=500, detail="An internal error occurred during skill extraction.")

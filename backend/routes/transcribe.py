@@ -16,14 +16,16 @@ async def transcribe_audio(request: Request, file: UploadFile = File(...), user_
         raise HTTPException(status_code=400, detail="Invalid file type. Only audio files are allowed.")
         
     client = Groq(api_key=os.getenv("GROQ_API_KEY"))
+    tmp_path = None
     try:
         with tempfile.NamedTemporaryFile(delete=False, suffix=".webm") as tmp:
-            content = await file.read()
-            if len(content) > MAX_FILE_SIZE:
-                raise HTTPException(status_code=400, detail="File too large. Maximum size is 10MB.")
-            print(f"FILE SIZE: {len(content)} bytes")
-            tmp.write(content)
             tmp_path = tmp.name
+            size = 0
+            while chunk := await file.read(1024 * 1024): # read 1MB chunks
+                size += len(chunk)
+                if size > MAX_FILE_SIZE:
+                    raise HTTPException(status_code=400, detail="File too large. Maximum size is 10MB.")
+                tmp.write(chunk)
 
         with open(tmp_path, "rb") as audio_file:
             response = client.audio.transcriptions.create(
@@ -33,7 +35,6 @@ async def transcribe_audio(request: Request, file: UploadFile = File(...), user_
                 response_format="verbose_json"
             )
 
-        os.unlink(tmp_path)
         return {
             "transcript": response.text,
             "language": response.language
@@ -42,5 +43,8 @@ async def transcribe_audio(request: Request, file: UploadFile = File(...), user_
     except HTTPException as he:
         raise he
     except Exception as e:
-        print(f"FULL ERROR: {e}")
+        print(f"[transcribe] Transcription failed.")
         raise HTTPException(status_code=500, detail="An internal error occurred during transcription.")
+    finally:
+        if tmp_path and os.path.exists(tmp_path):
+            os.unlink(tmp_path)
