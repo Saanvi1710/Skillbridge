@@ -9,10 +9,6 @@ export default function Dashboard() {
   const [loading, setLoading] = useState(true)
   const navigate = useNavigate()
 
-  useEffect(() => {
-    fetchProfiles()
-  }, [])
-
   const fetchProfiles = async () => {
     const { data } = await supabase
       .from("profiles")
@@ -23,6 +19,12 @@ export default function Dashboard() {
     setProfiles(data || [])
     setLoading(false)
   }
+
+  useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    fetchProfiles()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
 
   const handleDelete = async (e, profileId) => {
     e.stopPropagation()

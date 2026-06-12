@@ -8,7 +8,7 @@ export default function Login() {
 
   useEffect(() => {
     if (user) navigate("/dashboard")
-  }, [user])
+  }, [user, navigate])
 
   return (
     <div style={{

@@ -108,6 +108,7 @@ export default function VoiceRecorder() {
       timerRef.current = setInterval(() => setRecordingTime(t => t + 1), 1000)
     } else {
       clearInterval(timerRef.current)
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setRecordingTime(0)
     }
     return () => clearInterval(timerRef.current)
@@ -115,6 +116,7 @@ export default function VoiceRecorder() {
 
   useEffect(() => {
     if (user?.user_metadata?.full_name) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setBasicDetails(prev => ({ ...prev, name: user.user_metadata.full_name }))
     }
   }, [user])

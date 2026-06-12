@@ -42,8 +42,8 @@ async def transcribe_audio(request: Request, file: UploadFile = File(...), user_
 
     except HTTPException as he:
         raise he
-    except Exception as e:
-        print(f"[transcribe] Transcription failed.")
+    except Exception:
+        print("[transcribe] Transcription failed.")
         raise HTTPException(status_code=500, detail="An internal error occurred during transcription.")
     finally:
         if tmp_path and os.path.exists(tmp_path):
