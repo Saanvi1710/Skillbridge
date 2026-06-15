@@ -89,12 +89,9 @@ async def add_security_headers_and_tracing(request: Request, call_next):
     return response
 
 
-allowed_origins_str = os.getenv("ALLOWED_ORIGINS", "http://localhost:5173")
-allowed_origins = [origin.strip() for origin in allowed_origins_str.split(",") if origin.strip()]
-
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=allowed_origins,
+    allow_origin_regex=".*",
     allow_credentials=True,
     allow_methods=["GET", "POST", "OPTIONS"],
     allow_headers=["Authorization", "Content-Type", "Accept", "X-Request-ID"],
