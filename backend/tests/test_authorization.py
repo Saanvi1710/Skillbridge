@@ -1,9 +1,4 @@
-import json
-import os
-import pytest
-from unittest.mock import patch
 
-from tests.conftest import authed_client
 
 def test_get_own_profile(authed_client):
     pass

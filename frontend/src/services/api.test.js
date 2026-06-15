@@ -15,7 +15,7 @@ vi.mock('./supabase', () => ({
 }))
 
 // Mock global fetch
-global.fetch = vi.fn()
+globalThis.fetch = vi.fn()
 
 describe('API Service', () => {
   beforeEach(() => {
@@ -27,18 +27,18 @@ describe('API Service', () => {
       supabase.auth.getSession.mockResolvedValue({
         data: { session: { access_token: 'fake-token' } }
       })
-      global.fetch.mockResolvedValue({ ok: true })
+      globalThis.fetch.mockResolvedValue({ ok: true })
 
       await authFetch('http://localhost:8000/test')
 
-      expect(global.fetch).toHaveBeenCalledWith('http://localhost:8000/test', expect.objectContaining({
+      expect(globalThis.fetch).toHaveBeenCalledWith('http://localhost:8000/test', expect.objectContaining({
         headers: { 'Authorization': 'Bearer fake-token' }
       }))
     })
 
     it('throws error with detail from JSON on 401', async () => {
       supabase.auth.getSession.mockResolvedValue({ data: { session: null } })
-      global.fetch.mockResolvedValue({
+      globalThis.fetch.mockResolvedValue({
         ok: false,
         status: 401,
         json: async () => ({ detail: 'Not authenticated' })
@@ -49,7 +49,7 @@ describe('API Service', () => {
 
     it('throws generic error on non-json 502', async () => {
       supabase.auth.getSession.mockResolvedValue({ data: { session: null } })
-      global.fetch.mockResolvedValue({
+      globalThis.fetch.mockResolvedValue({
         ok: false,
         status: 502,
         json: async () => { throw new Error('Not json') }
@@ -60,7 +60,7 @@ describe('API Service', () => {
 
     it('propagates network failure', async () => {
       supabase.auth.getSession.mockResolvedValue({ data: { session: null } })
-      global.fetch.mockRejectedValue(new TypeError('Failed to fetch'))
+      globalThis.fetch.mockRejectedValue(new TypeError('Failed to fetch'))
 
       await expect(authFetch('http://localhost:8000/test')).rejects.toThrow('Failed to fetch')
     })
@@ -82,7 +82,7 @@ describe('API Service', () => {
           }
         ]
       }
-      global.fetch.mockResolvedValue({
+      globalThis.fetch.mockResolvedValue({
         ok: true,
         json: async () => mockResponse
       })
@@ -95,7 +95,7 @@ describe('API Service', () => {
     it('saveProfile returns profile_id', async () => {
       // Mock exactly the Pydantic SaveProfileResponse
       const mockResponse = { success: true, profile_id: 'uuid', share_slug: 'slug123' }
-      global.fetch.mockResolvedValue({ ok: true, json: async () => mockResponse })
+      globalThis.fetch.mockResolvedValue({ ok: true, json: async () => mockResponse })
 
       const data = await saveProfile({})
       expect(data).toHaveProperty('profile_id', 'uuid')
@@ -109,7 +109,7 @@ describe('API Service', () => {
         tools_used: [], work_domains: [], languages_spoken: [], summary: 'sum',
         needs_more_info: false, followup_question: null
       }
-      global.fetch.mockResolvedValue({ ok: true, json: async () => mockResponse })
+      globalThis.fetch.mockResolvedValue({ ok: true, json: async () => mockResponse })
 
       const data = await extractSkills('Hello')
       expect(data).toHaveProperty('skills')
@@ -118,7 +118,7 @@ describe('API Service', () => {
     
     it('transcribeAudio returns transcript', async () => {
         const mockResponse = { transcript: "Hello", language: "en" }
-        global.fetch.mockResolvedValue({ ok: true, json: async () => mockResponse })
+        globalThis.fetch.mockResolvedValue({ ok: true, json: async () => mockResponse })
         const blob = new Blob([""], { type: "audio/webm" })
         const data = await transcribeAudio(blob)
         expect(data).toHaveProperty('transcript', 'Hello')

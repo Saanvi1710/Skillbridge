@@ -1,7 +1,5 @@
-import json
 import httpx
 from unittest.mock import patch, MagicMock
-from tests.conftest import authed_client
 
 @patch("routes.transcribe.Groq")
 def test_groq_transcribe_down(MockGroq, authed_client):

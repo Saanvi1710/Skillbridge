@@ -31,14 +31,11 @@ class MockMediaRecorder {
     if (this.onstop) this.onstop()
   }
 }
-global.MediaRecorder = MockMediaRecorder
-global.navigator.mediaDevices = {
-  getUserMedia: vi.fn().mockResolvedValue({ getTracks: () => [{ stop: vi.fn() }] })
-}
+globalThis.MediaRecorder = MockMediaRecorder
+globalThis.Blob = class { constructor() {} }
+globalThis.navigator = { mediaDevices: { getUserMedia: vi.fn().mockResolvedValue({ getTracks: () => [{ stop: vi.fn() }] }) } }
 
 describe('VoiceRecorder', () => {
-  const mockOnSkillsExtracted = vi.fn()
-
   const mockUser = { user_metadata: { full_name: 'Test User' } }
 
   beforeEach(() => {

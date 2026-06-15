@@ -17,6 +17,7 @@ export default function Jobs() {
 
   const fetchJobs = async (profileData, locationType) => {
     setLoading(true)
+     
     setError(null)
     const skills = profileData.raw_skills?.skills || []
     const summary = profileData.generated_summary || ""
@@ -33,6 +34,7 @@ export default function Jobs() {
   }
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setError(null)
     authFetch(`/profile/${profileId}`)
       .then(r => r.json())

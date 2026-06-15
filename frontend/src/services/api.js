@@ -24,7 +24,7 @@ export async function authFetch(url, options = {}) {
       try {
         const errData = await response.json()
         errorMessage = errData.detail || errorMessage
-      } catch (e) {
+      } catch {
         // Fallback to generic message if not JSON
       }
       throw new Error(errorMessage)

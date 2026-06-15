@@ -1,6 +1,5 @@
 import tempfile
 from unittest.mock import patch
-from tests.conftest import authed_client, sample_profile_payload
 
 def test_extract_empty_transcript(authed_client):
     response = authed_client.post("/extract-skills", json={"transcript": ""})

@@ -1,6 +1,3 @@
-import json
-from unittest.mock import patch
-from tests.conftest import unauthed_client
 
 def test_share_valid_slug_returns_profile(unauthed_client):
     from deps import get_supabase
