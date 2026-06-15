@@ -1,0 +1,7 @@
+{
+  "profile_text": "5 years tailoring, garment alteration, stitching blouse, sewing machine Singer",
+  "jobs": [
+    {"title": "Tailor", "company": "FabIndia", "location": "Delhi", "description": "garment stitching alteration", "source": "jooble", "type": "Full-time", "apply_url": "https://example.com/4"},
+    {"title": "Delivery Driver", "company": "Swiggy", "location": "Delhi", "description": "food delivery bike rider", "source": "jsearch", "type": "Part-time", "apply_url": "https://example.com/5"}
+  ]
+}

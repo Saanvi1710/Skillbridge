@@ -161,8 +161,8 @@ export default function VoiceRecorder() {
       const extracted = await extractSkills(text)
       setProfile(extracted)
       setStep(STEPS.DONE)
-    } catch {
-      setError("Something went wrong. Please try again.")
+    } catch (err) {
+      setError(err.message || "Something went wrong. Please try again.")
       setStep(STEPS.IDLE)
     }
   }
@@ -186,13 +186,12 @@ export default function VoiceRecorder() {
         gender: basicDetails.gender || undefined,
         phone: basicDetails.phone || undefined,
         city: basicDetails.city || undefined,
-        allow_contact: basicDetails.allow_contact,
-        user_id: user?.id
+        allow_contact: basicDetails.allow_contact
       })
       setSavedProfileId(result.profile_id)
       setSaved(true)
-    } catch {
-      setError("Failed to save profile.")
+    } catch (err) {
+      setError(err.message || "Failed to save profile.")
     }
   }
 

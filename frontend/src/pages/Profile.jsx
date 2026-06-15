@@ -1,18 +1,20 @@
 import { useEffect, useState } from "react"
 import { useParams, useNavigate } from "react-router-dom"
+import { authFetch } from "../services/api"
 
 export default function Profile() {
   const { id } = useParams()
   const navigate = useNavigate()
   const [profile, setProfile] = useState(null)
   const [loading, setLoading] = useState(true)
+  const [error, setError] = useState(null)
   const [copied, setCopied] = useState(false)
 
   useEffect(() => {
-    fetch(`${import.meta.env.VITE_API_URL}/profile/${id}`)
+    authFetch(`/profile/${id}`)
       .then(r => r.json())
       .then(data => { setProfile(data); setLoading(false) })
-      .catch(() => setLoading(false))
+      .catch((err) => { setError(err.message || "Failed to load profile."); setLoading(false) })
   }, [id])
 
   const copyLink = () => {
@@ -24,6 +26,14 @@ export default function Profile() {
   if (loading) return (
     <div style={{ minHeight: "100vh", background: "#030712", display: "flex", alignItems: "center", justifyContent: "center" }}>
       <p style={{ color: "#4b5563", fontFamily: "DM Sans, sans-serif" }}>Loading profile...</p>
+    </div>
+  )
+
+  if (error) return (
+    <div style={{ minHeight: "100vh", background: "#030712", display: "flex", alignItems: "center", justifyContent: "center" }}>
+      <div style={{ background: "#2d0a0a", border: "1px solid #7f1d1d", borderRadius: "12px", padding: "16px 24px", color: "#fca5a5", fontFamily: "DM Sans, sans-serif" }}>
+        ⚠ {error}
+      </div>
     </div>
   )
 

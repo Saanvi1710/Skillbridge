@@ -9,12 +9,20 @@ export default function Dashboard() {
   const [loading, setLoading] = useState(true)
   const navigate = useNavigate()
 
+  const [error, setError] = useState(null)
+
   const fetchProfiles = async () => {
-    const { data } = await supabase
+    setError(null)
+    const { data, error: sbError } = await supabase
       .from("profiles")
       .select("*")
       .eq("user_id", user.id)
       .order("created_at", { ascending: false })
+
+    if (sbError) {
+      console.error(sbError)
+      setError(sbError.message || "Failed to load profiles")
+    }
 
     setProfiles(data || [])
     setLoading(false)
@@ -32,7 +40,13 @@ export default function Dashboard() {
     const confirm = window.confirm("Delete this profile?")
     if (!confirm) return
 
-    await supabase.from("profiles").delete().eq("id", profileId)
+    const { error: sbError } = await supabase.from("profiles").delete().eq("id", profileId)
+
+    if (sbError) {
+      console.error(sbError)
+      setError(sbError.message || "Failed to delete profile")
+      return
+    }
 
     fetchProfiles()
   }
@@ -145,6 +159,18 @@ export default function Dashboard() {
         >
           + Create New Profile
         </button>
+
+        {/* Error Banner */}
+        {error && (
+          <div style={{
+            background: "#2d0a0a", border: "1px solid #7f1d1d",
+            borderRadius: "12px", padding: "14px 16px", marginBottom: "20px",
+            color: "#fca5a5", fontSize: "14px", display: "flex", alignItems: "center", gap: "10px"
+          }}>
+            <span>⚠</span>
+            <span>{error}</span>
+          </div>
+        )}
 
         {/* Profiles List */}
         {loading ? (

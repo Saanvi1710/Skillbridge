@@ -22,16 +22,24 @@ export function AuthProvider({ children }) {
   }, [])
 
   const signInWithGoogle = async () => {
-    return supabase.auth.signInWithOAuth({
+    const { error } = await supabase.auth.signInWithOAuth({
       provider: "google",
       options: {
         redirectTo: `${window.location.origin}/dashboard`
       }
     })
+    if (error) {
+      console.error("Sign in error:", error.message)
+      throw error
+    }
   }
 
   const signOut = async () => {
-    await supabase.auth.signOut()
+    const { error } = await supabase.auth.signOut()
+    if (error) {
+      console.error("Sign out error:", error.message)
+      throw error
+    }
   }
 
   return (

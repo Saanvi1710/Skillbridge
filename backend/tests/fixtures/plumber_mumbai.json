@@ -1,0 +1,8 @@
+{
+  "profile_text": "8 years plumbing experience, pipe fitting, water tank repair, bathroom installation",
+  "jobs": [
+    {"title": "Plumber", "company": "UrbanClap", "location": "Mumbai", "description": "pipe fitting water heater installation", "source": "adzuna", "type": "Full-time", "apply_url": "https://example.com/1"},
+    {"title": "Software Engineer", "company": "Infosys", "location": "Mumbai", "description": "Java Spring microservices", "source": "adzuna", "type": "Full-time", "apply_url": "https://example.com/2"},
+    {"title": "Plumbing Helper", "company": "BuildIndia", "location": "Pune", "description": "assist senior plumber pipe cutting", "source": "jooble", "type": "Part-time", "apply_url": "https://example.com/3"}
+  ]
+}

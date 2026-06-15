@@ -22,6 +22,7 @@ jobs:
           cache-dependency-path: './frontend/package-lock.json'
       - run: npm ci
       - run: npm run lint
+      - run: npm run test
       - run: npm run build
 
   backend-checks:
@@ -43,6 +44,5 @@ jobs:
           pip install ruff pytest
       - name: Lint with Ruff
         run: ruff check .
-      # Tests will be added here in Phase 2
-      # - name: Run tests
-      #   run: pytest
+      - name: Run tests
+        run: pytest

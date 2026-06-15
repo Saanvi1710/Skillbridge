@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react"
 import { useParams, useNavigate } from "react-router-dom"
-import { getJobMatches } from "../services/api"
+import { getJobMatches, authFetch } from "../services/api"
 
 export default function Jobs() {
   const { profileId } = useParams()
@@ -8,6 +8,7 @@ export default function Jobs() {
   const [profile, setProfile] = useState(null)
   const [jobs, setJobs] = useState([])
   const [loading, setLoading] = useState(true)
+  const [error, setError] = useState(null)
   const [page, setPage] = useState(1)
 
   const itemsPerPage = 10
@@ -16,6 +17,7 @@ export default function Jobs() {
 
   const fetchJobs = async (profileData, locationType) => {
     setLoading(true)
+    setError(null)
     const skills = profileData.raw_skills?.skills || []
     const summary = profileData.generated_summary || ""
     const work_domains = profileData.work_domains || []
@@ -25,13 +27,14 @@ export default function Jobs() {
       const { matches } = await getJobMatches(skills, summary, work_domains, city)
       setJobs(matches)
     } catch (e) {
-      console.error(e)
+      setError(e.message || "Failed to fetch matching jobs.")
     }
     setLoading(false)
   }
 
   useEffect(() => {
-    fetch(`${import.meta.env.VITE_API_URL}/profile/${profileId}`)
+    setError(null)
+    authFetch(`/profile/${profileId}`)
       .then(r => r.json())
       .then(data => {
         setProfile(data)
@@ -43,7 +46,10 @@ export default function Jobs() {
           fetchJobs(data, "local")
         }
       })
-      .catch(() => setLoading(false))
+      .catch((err) => {
+        setError(err.message || "Failed to load profile.")
+        setLoading(false)
+      })
   }, [profileId])
 
   const handleToggle = (type) => {
@@ -132,6 +138,18 @@ export default function Jobs() {
             >
               Anywhere in India
             </button>
+          </div>
+        )}
+
+        {/* Error Banner */}
+        {error && (
+          <div style={{
+            background: "#2d0a0a", border: "1px solid #7f1d1d",
+            borderRadius: "12px", padding: "14px 16px", marginBottom: "20px",
+            color: "#fca5a5", fontSize: "14px", display: "flex", alignItems: "center", gap: "10px"
+          }}>
+            <span>⚠</span>
+            <span>{error}</span>
           </div>
         )}
 

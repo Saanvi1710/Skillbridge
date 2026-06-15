@@ -6,17 +6,35 @@ const BASE_URL = import.meta.env.VITE_API_URL
  * Authenticated fetch wrapper — attaches the Supabase JWT
  * as a Bearer token to all requests.
  */
-async function authFetch(url, options = {}) {
+export async function authFetch(url, options = {}) {
   const { data: { session } } = await supabase.auth.getSession()
   const token = session?.access_token
 
-  return fetch(url, {
-    ...options,
-    headers: {
-      ...options.headers,
-      ...(token ? { "Authorization": `Bearer ${token}` } : {})
+  try {
+    const response = await fetch(url, {
+      ...options,
+      headers: {
+        ...options.headers,
+        ...(token ? { "Authorization": `Bearer ${token}` } : {})
+      }
+    })
+
+    if (!response.ok) {
+      let errorMessage = `HTTP error! status: ${response.status}`
+      try {
+        const errData = await response.json()
+        errorMessage = errData.detail || errorMessage
+      } catch (e) {
+        // Fallback to generic message if not JSON
+      }
+      throw new Error(errorMessage)
     }
-  })
+
+    return response
+  } catch (error) {
+    console.error(`API call failed for ${url}:`, error.message)
+    throw error
+  }
 }
 
 export async function transcribeAudio(audioBlob) {
@@ -27,8 +45,6 @@ export async function transcribeAudio(audioBlob) {
     method: "POST",
     body: formData,
   })
-
-  if (!response.ok) throw new Error("Transcription failed")
   return response.json()
 }
 
@@ -38,8 +54,6 @@ export async function extractSkills(transcript) {
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ transcript })
   })
-
-  if (!response.ok) throw new Error("Extraction failed")
   return response.json()
 }
 
@@ -49,8 +63,6 @@ export async function saveProfile(profileData) {
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(profileData)
   })
-
-  if (!response.ok) throw new Error("Save failed")
   return response.json()
 }
 
@@ -60,6 +72,5 @@ export async function getJobMatches(skills, summary, work_domains = [], city = n
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ skills, summary, work_domains, city })
   })
-  if (!response.ok) throw new Error("Matching failed")
   return response.json()
 }
