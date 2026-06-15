@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react"
 import { useParams, useNavigate } from "react-router-dom"
-import { authFetch } from "../services/api"
+import { authFetch, BASE_URL } from "../services/api"
 
 export default function Profile() {
   const { id } = useParams()
@@ -11,7 +11,7 @@ export default function Profile() {
   const [copied, setCopied] = useState(false)
 
   useEffect(() => {
-    authFetch(`/profile/${id}`)
+    authFetch(`${BASE_URL}/profile/${id}`)
       .then(r => r.json())
       .then(data => { setProfile(data); setLoading(false) })
       .catch((err) => { setError(err.message || "Failed to load profile."); setLoading(false) })

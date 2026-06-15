@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react"
 import { useParams, useNavigate } from "react-router-dom"
-import { getJobMatches, authFetch } from "../services/api"
+import { getJobMatches, authFetch, BASE_URL } from "../services/api"
 
 export default function Jobs() {
   const { profileId } = useParams()
@@ -17,7 +17,6 @@ export default function Jobs() {
 
   const fetchJobs = async (profileData, locationType) => {
     setLoading(true)
-     
     setError(null)
     const skills = profileData.raw_skills?.skills || []
     const summary = profileData.generated_summary || ""
@@ -34,9 +33,8 @@ export default function Jobs() {
   }
 
   useEffect(() => {
-    // eslint-disable-next-line react-hooks/set-state-in-effect
     setError(null)
-    authFetch(`/profile/${profileId}`)
+    authFetch(`${BASE_URL}/profile/${profileId}`)
       .then(r => r.json())
       .then(data => {
         setProfile(data)
