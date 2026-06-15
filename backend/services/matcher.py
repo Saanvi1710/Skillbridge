@@ -9,54 +9,47 @@ logger = logging.getLogger("skillbridge.matcher")
 _model = None
 
 
-def _get_model():
-    """Lazy-load SentenceTransformer so cold-start doesn't block import."""
-    global _model
-    if _model is None:
-        logger.info("Loading SentenceTransformer model (first request)…")
-        from sentence_transformers import SentenceTransformer
-        _model = SentenceTransformer("all-MiniLM-L6-v2")
-        logger.info("Model loaded successfully")
-    return _model
-
+def _tokenize(text: str) -> set:
+    """Simple tokenizer for Jaccard similarity."""
+    import re
+    text = text.lower()
+    words = re.findall(r'\w+', text)
+    return set(words)
 
 def _score_jobs(jobs: list, profile_text: str, top_k: int) -> list:
-    """Score a list of jobs against a profile using cosine similarity."""
+    """Score a list of jobs against a profile using pure Python Jaccard similarity."""
     if not jobs:
         return []
 
-    model = _get_model()
-
-    job_texts = [f"{j['title']} {j.get('description', '')}" for j in jobs]
-    job_embeddings = model.encode(job_texts, convert_to_numpy=True)
-    profile_embedding = model.encode([profile_text], convert_to_numpy=True)
-
-    # Cosine similarity — guard against zero-norm vectors
-    profile_norm_val = np.linalg.norm(profile_embedding)
-    if profile_norm_val == 0:
-        logger.warning("Profile embedding has zero norm — cannot score jobs")
+    profile_tokens = _tokenize(profile_text)
+    if not profile_tokens:
+        logger.warning("Profile has no tokens to match.")
         return []
 
-    job_norms = np.linalg.norm(job_embeddings, axis=1, keepdims=True)
-    # Replace any zero norms with 1.0 to avoid division by zero
-    job_norms = np.where(job_norms == 0, 1.0, job_norms)
+    similarities = []
+    for i, job in enumerate(jobs):
+        job_text = f"{job.get('title', '')} {job.get('description', '')}"
+        job_tokens = _tokenize(job_text)
+        
+        if not job_tokens:
+            similarities.append((i, 0.0))
+            continue
+            
+        intersection = len(profile_tokens.intersection(job_tokens))
+        union = len(profile_tokens.union(job_tokens))
+        score = intersection / union if union > 0 else 0.0
+        similarities.append((i, score))
 
-    profile_norm = profile_embedding / profile_norm_val
-    jobs_norm = job_embeddings / job_norms
-    similarities = np.dot(jobs_norm, profile_norm.T).flatten()
-
-    # Get top_k matches
-    top_indices = np.argsort(similarities)[::-1][:top_k]
-
+    # Sort by score descending
+    similarities.sort(key=lambda x: x[1], reverse=True)
     results = []
-    for idx in top_indices:
-        raw_score = max(0.0, float(similarities[idx]))
-
-        # Strict threshold: drop jobs that are completely irrelevant (raw score < 0.30)
-        if raw_score < 0.30:
+    for idx, score in similarities[:top_k]:
+        raw_score = score
+        # Strict threshold: drop jobs that are completely irrelevant (raw score < 0.05 for jaccard)
+        if raw_score < 0.05:
             continue
 
-        job = jobs[int(idx)].copy()
+        job = jobs[idx].copy()
 
         # Boost raw cosine similarity score for human readability
         boosted_score = (raw_score ** 0.5) * 100
