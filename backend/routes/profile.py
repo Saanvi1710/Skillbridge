@@ -281,3 +281,68 @@ async def get_shared_profile(
             status_code=500,
             detail="An internal error occurred while retrieving the shared profile.",
         )
+
+
+# ── Contact update ──────────────────────────────────────
+class ContactUpdateRequest(BaseModel):
+    name: Optional[str] = Field(None, max_length=100)
+    phone: Optional[str] = Field(None, max_length=20)
+    city: Optional[str] = Field(None, max_length=100)
+    allow_contact: Optional[bool] = None
+
+
+@router.patch("/profile/{profile_id}/contact")
+@limiter.limit("20/minute")
+async def update_contact(
+    request: Request,
+    profile_id: str,
+    data: ContactUpdateRequest,
+    user_id: str = Depends(verify_token),
+    supabase: Client = Depends(get_supabase),
+):
+    """Update the contact details (name, phone, city, allow_contact) for a profile.
+
+    Only the owner of the profile may call this endpoint.
+    Skills and AI-generated fields are intentionally not editable here;
+    they require a fresh voice recording.
+    """
+    try:
+        # Confirm the caller owns this profile
+        result = supabase.table("profiles").select("user_id").eq("id", profile_id).execute()
+        if not result.data:
+            raise HTTPException(status_code=404, detail="Profile not found")
+        if result.data[0]["user_id"] != user_id:
+            raise HTTPException(status_code=403, detail="Not authorized to edit this profile")
+
+        # Build only the fields that were explicitly provided
+        update_payload: dict = {}
+        if data.name is not None:
+            update_payload["name"] = data.name
+        if data.phone is not None:
+            update_payload["phone"] = data.phone
+        if data.city is not None:
+            update_payload["city"] = data.city
+        if data.allow_contact is not None:
+            update_payload["allow_contact"] = data.allow_contact
+
+        if not update_payload:
+            return {"success": True, "updated": []}
+
+        supabase.table("users").update(update_payload).eq("id", user_id).execute()
+
+        logger.info(
+            "Contact updated for profile %s, user %s, fields: %s",
+            profile_id[:8],
+            user_id[:8],
+            list(update_payload.keys()),
+        )
+        return {"success": True, "updated": list(update_payload.keys())}
+
+    except HTTPException:
+        raise
+    except Exception:
+        logger.exception("update-contact failed for profile %s", profile_id[:8])
+        raise HTTPException(
+            status_code=500,
+            detail="An internal error occurred while updating contact details.",
+        )

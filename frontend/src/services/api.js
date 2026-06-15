@@ -74,3 +74,12 @@ export async function getJobMatches(skills, summary, work_domains = [], city = n
   })
   return response.json()
 }
+
+export async function updateContactDetails(profileId, { name, phone, city, allow_contact }) {
+  const response = await authFetch(`${BASE_URL}/profile/${profileId}/contact`, {
+    method: "PATCH",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ name, phone, city, allow_contact })
+  })
+  return response.json()
+}
