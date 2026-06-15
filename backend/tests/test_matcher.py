@@ -1,6 +1,5 @@
 import json
 import os
-import pytest
 
 from services.matcher import _score_jobs
 from services.job_fetcher import deduplicate_jobs
