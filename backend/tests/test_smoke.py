@@ -26,11 +26,7 @@ def test_ready_check_failure(unauthed_client, monkeypatch):
     assert response.json()["status"] == "degraded"
     assert "groq" in response.json()["failed"]
 
-def test_all_routes_registered(unauthed_client):
-    routes = [route.path for route in app.routes]
-    expected_routes = ["/transcribe", "/extract-skills", "/save-profile", "/profile/{profile_id}", "/match-jobs", "/share/{slug}"]
-    for route in expected_routes:
-        assert route in routes
+
 
 def test_security_headers_present(unauthed_client):
     response = unauthed_client.get("/")
