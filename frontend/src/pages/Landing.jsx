@@ -16,18 +16,18 @@ export default function Landing() {
         {/* Nav */}
         <div style={{
           display: "flex", alignItems: "center", justifyContent: "space-between",
-          padding: "20px 0"
+          padding: "var(--space-lg) 0"
         }}>
-          <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
-            <span style={{ fontSize: "20px" }}>🎙</span>
+          <div style={{ display: "flex", alignItems: "center", gap: "var(--space-sm)" }}>
+            <span style={{ fontSize: "var(--font-lg)" }}>🎙</span>
             <span style={{ fontWeight: 600 }}>SkillBridge</span>
           </div>
           <button
             onClick={() => navigate(user ? "/dashboard" : "/login")}
             style={{
-              padding: "8px 16px", background: "transparent",
-              border: "1px solid #1e293b", borderRadius: "8px",
-              color: "#9ca3af", fontSize: "13px", cursor: "pointer"
+              padding: "var(--space-sm) var(--space-md)", minHeight: "var(--touch-target)", background: "transparent",
+              border: "1px solid #1e293b", borderRadius: "var(--radius-sm)",
+              color: "#9ca3af", fontSize: "var(--font-sm)", cursor: "pointer"
             }}
           >
             {user ? "Dashboard" : "Login"}
@@ -35,7 +35,7 @@ export default function Landing() {
         </div>
 
         {/* Hero */}
-        <div style={{ paddingTop: "60px", paddingBottom: "48px" }}>
+        <div style={{ paddingTop: "60px", paddingBottom: "var(--space-xl)" }}>
           <div style={{
             display: "inline-block", padding: "4px 12px",
             background: "#0c1a2e", border: "1px solid #1e3a5f",
@@ -62,11 +62,11 @@ export default function Landing() {
           <button
             onClick={() => navigate(user ? "/record" : "/login")}
             style={{
-              width: "100%", padding: "16px",
+              width: "100%", padding: "var(--space-md)", minHeight: "var(--touch-target)",
               background: "linear-gradient(135deg, #f97316, #ea580c)",
-              border: "none", borderRadius: "14px", color: "#fff",
-              fontSize: "16px", fontWeight: 600, cursor: "pointer",
-              marginBottom: "12px"
+              border: "none", borderRadius: "var(--radius-md)", color: "#fff",
+              fontSize: "var(--font-base)", fontWeight: 600, cursor: "pointer",
+              marginBottom: "var(--space-sm)"
             }}
           >
             Create Your Profile — Free

@@ -1,3 +1,42 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+:root {
+  /* Typography Scale */
+  --font-xs: 11px;
+  --font-sm: 13px;
+  --font-base: 15px;
+  --font-lg: 18px;
+  --font-xl: 22px;
+  --font-2xl: 28px;
+
+  /* Spacing Scale */
+  --space-xs: 4px;
+  --space-sm: 8px;
+  --space-md: 16px;
+  --space-lg: 24px;
+  --space-xl: 32px;
+
+  /* Radii Scale */
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 16px;
+  --radius-xl: 20px;
+  --radius-full: 9999px;
+  
+  /* Touch target helpers */
+  --touch-target: 44px;
+}
+
+/* Global Focus Styles for Accessibility */
+*:focus-visible {
+  outline: 2px solid #f97316 !important;
+  outline-offset: 2px !important;
+}
+
+/* Base styles to remove default margins/paddings */
+html, body {
+  margin: 0;
+  padding: 0;
+}

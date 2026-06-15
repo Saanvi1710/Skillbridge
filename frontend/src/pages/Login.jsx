@@ -38,15 +38,15 @@ export default function Login() {
         {/* Card */}
         <div style={{
           background: "#0f172a", border: "1px solid #1e293b",
-          borderRadius: "20px", padding: "28px"
+          borderRadius: "var(--radius-lg)", padding: "28px"
         }}>
           <button
             onClick={signInWithGoogle}
             style={{
-              width: "100%", padding: "14px",
+              width: "100%", padding: "var(--space-md)", minHeight: "var(--touch-target)",
               background: "#fff", border: "none",
-              borderRadius: "12px", color: "#111827",
-              fontSize: "15px", fontWeight: 600,
+              borderRadius: "var(--radius-md)", color: "#111827",
+              fontSize: "var(--font-base)", fontWeight: 600,
               cursor: "pointer", display: "flex",
               alignItems: "center", justifyContent: "center", gap: "10px"
             }}
@@ -66,10 +66,10 @@ export default function Login() {
         </div>
 
         {/* Back */}
-        <p style={{ textAlign: "center", marginTop: "20px" }}>
+        <p style={{ textAlign: "center", marginTop: "var(--space-lg)" }}>
           <span
             onClick={() => navigate("/")}
-            style={{ fontSize: "13px", color: "#4b5563", cursor: "pointer" }}
+            style={{ fontSize: "var(--font-sm)", color: "#4b5563", cursor: "pointer", minHeight: "var(--touch-target)", display: "inline-flex", alignItems: "center" }}
           >
             ← Back to home
           </span>

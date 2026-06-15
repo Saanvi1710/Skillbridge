@@ -526,7 +526,7 @@ export default function VoiceRecorder() {
                   value={basicDetails.name}
                   onChange={(e) => setBasicDetails({...basicDetails, name: e.target.value})}
                   placeholder="Enter your name"
-                  style={{ width: "100%", padding: "10px 14px", borderRadius: "10px", background: "#030712", border: "1px solid #1e293b", color: "#fff", fontSize: "14px" }}
+                  style={{ width: "100%", padding: "10px 14px", minHeight: "var(--touch-target)", borderRadius: "var(--radius-sm)", background: "#030712", border: "1px solid #1e293b", color: "#fff", fontSize: "var(--font-sm)" }}
                 />
               </div>
               <div style={{ display: "flex", gap: "12px" }}>
@@ -537,7 +537,7 @@ export default function VoiceRecorder() {
                     value={basicDetails.age}
                     onChange={(e) => setBasicDetails({...basicDetails, age: e.target.value})}
                     placeholder="e.g. 28"
-                    style={{ width: "100%", padding: "10px 14px", borderRadius: "10px", background: "#030712", border: "1px solid #1e293b", color: "#fff", fontSize: "14px" }}
+                    style={{ width: "100%", padding: "10px 14px", minHeight: "var(--touch-target)", borderRadius: "var(--radius-sm)", background: "#030712", border: "1px solid #1e293b", color: "#fff", fontSize: "var(--font-sm)" }}
                   />
                 </div>
                 <div style={{ flex: 1 }}>
@@ -545,7 +545,7 @@ export default function VoiceRecorder() {
                   <select 
                     value={basicDetails.gender}
                     onChange={(e) => setBasicDetails({...basicDetails, gender: e.target.value})}
-                    style={{ width: "100%", padding: "10px 14px", borderRadius: "10px", background: "#030712", border: "1px solid #1e293b", color: "#fff", fontSize: "14px", appearance: "none" }}
+                    style={{ width: "100%", padding: "10px 14px", minHeight: "var(--touch-target)", borderRadius: "var(--radius-sm)", background: "#030712", border: "1px solid #1e293b", color: "#fff", fontSize: "var(--font-sm)", appearance: "none" }}
                   >
                     <option value="">Select</option>
                     <option value="Male">Male</option>
@@ -566,7 +566,7 @@ export default function VoiceRecorder() {
                     }}
                     maxLength={10}
                     placeholder="10-digit mobile number"
-                    style={{ width: "100%", padding: "10px 14px", borderRadius: "10px", background: "#030712", border: "1px solid #1e293b", color: "#fff", fontSize: "14px" }}
+                    style={{ width: "100%", padding: "10px 14px", minHeight: "var(--touch-target)", borderRadius: "var(--radius-sm)", background: "#030712", border: "1px solid #1e293b", color: "#fff", fontSize: "var(--font-sm)" }}
                   />
                 </div>
                 <div style={{ flex: 1 }}>
@@ -576,7 +576,7 @@ export default function VoiceRecorder() {
                     value={basicDetails.city}
                     onChange={(e) => setBasicDetails({...basicDetails, city: e.target.value})}
                     placeholder="e.g. Mumbai"
-                    style={{ width: "100%", padding: "10px 14px", borderRadius: "10px", background: "#030712", border: "1px solid #1e293b", color: "#fff", fontSize: "14px" }}
+                    style={{ width: "100%", padding: "10px 14px", minHeight: "var(--touch-target)", borderRadius: "var(--radius-sm)", background: "#030712", border: "1px solid #1e293b", color: "#fff", fontSize: "var(--font-sm)" }}
                   />
                 </div>
               </div>
@@ -605,12 +605,13 @@ export default function VoiceRecorder() {
               style={{
                 flex: 1,
                 padding: "14px",
-                borderRadius: "14px",
+                minHeight: "var(--touch-target)",
+                borderRadius: "var(--radius-md)",
                 border: "none",
                 cursor: "pointer",
                 background: "linear-gradient(135deg, #16a34a, #15803d)",
                 color: "#fff",
-                fontSize: "14px",
+                fontSize: "var(--font-sm)",
                 fontWeight: 600,
                 transition: "all 0.2s"
               }}
@@ -622,12 +623,13 @@ export default function VoiceRecorder() {
               style={{
                 flex: 1,
                 padding: "14px",
-                borderRadius: "14px",
+                minHeight: "var(--touch-target)",
+                borderRadius: "var(--radius-md)",
                 border: "1px solid #1e293b",
                 cursor: "pointer",
                 background: "#0f172a",
                 color: "#9ca3af",
-                fontSize: "14px",
+                fontSize: "var(--font-sm)",
                 fontWeight: 500,
                 transition: "all 0.2s"
               }}
@@ -652,9 +654,9 @@ export default function VoiceRecorder() {
               <button
                 onClick={() => navigate(`/jobs/${savedProfileId}`)}
                 style={{
-                  width: "100%", padding: "14px", borderRadius: "12px", border: "none",
+                  width: "100%", padding: "14px", minHeight: "var(--touch-target)", borderRadius: "var(--radius-sm)", border: "none",
                   background: "linear-gradient(135deg, #f97316, #ea580c)", color: "#fff",
-                  fontSize: "15px", fontWeight: 600, cursor: "pointer", transition: "opacity 0.2s"
+                  fontSize: "var(--font-base)", fontWeight: 600, cursor: "pointer", transition: "opacity 0.2s"
                 }}
                 onMouseOver={e => e.target.style.opacity = "0.9"}
                 onMouseOut={e => e.target.style.opacity = "1"}
@@ -664,9 +666,9 @@ export default function VoiceRecorder() {
               <button
                 onClick={() => navigate(`/profile/${savedProfileId}`)}
                 style={{
-                  width: "100%", padding: "14px", borderRadius: "12px", border: "1px solid #1e293b",
+                  width: "100%", padding: "14px", minHeight: "var(--touch-target)", borderRadius: "var(--radius-sm)", border: "1px solid #1e293b",
                   background: "#0f172a", color: "#f9fafb",
-                  fontSize: "15px", fontWeight: 500, cursor: "pointer", transition: "background 0.2s"
+                  fontSize: "var(--font-base)", fontWeight: 500, cursor: "pointer", transition: "background 0.2s"
                 }}
                 onMouseOver={e => e.target.style.background = "#1e293b"}
                 onMouseOut={e => e.target.style.background = "#0f172a"}
@@ -676,8 +678,8 @@ export default function VoiceRecorder() {
               <button
                 onClick={reset}
                 style={{
-                  width: "100%", padding: "10px", border: "none", background: "transparent",
-                  color: "#9ca3af", fontSize: "13px", cursor: "pointer", marginTop: "8px"
+                  width: "100%", padding: "10px", minHeight: "var(--touch-target)", border: "none", background: "transparent",
+                  color: "#9ca3af", fontSize: "var(--font-sm)", cursor: "pointer", marginTop: "8px"
                 }}
               >
                 + Record Another Profile
