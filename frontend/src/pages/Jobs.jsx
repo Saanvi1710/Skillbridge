@@ -33,6 +33,7 @@ export default function Jobs() {
   }
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setError(null)
     authFetch(`${BASE_URL}/profile/${profileId}`)
       .then(r => r.json())

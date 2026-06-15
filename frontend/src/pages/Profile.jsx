@@ -169,7 +169,11 @@ export default function Profile() {
       .catch(err => { setError(err.message || "Failed to load profile."); setLoading(false) })
   }
 
-  useEffect(() => { loadProfile() }, [id]) // eslint-disable-line react-hooks/exhaustive-deps
+  useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    loadProfile()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [id])
 
   const copyLink = () => {
     navigator.clipboard.writeText(window.location.href)
