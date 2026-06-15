@@ -1,6 +1,4 @@
 import logging
-
-import numpy as np
 from services.job_fetcher import fetch_real_jobs
 
 logger = logging.getLogger("skillbridge.matcher")
