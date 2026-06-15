@@ -38,22 +38,23 @@ function ContactEditPanel({ profileId, initial, onSave, onCancel }) {
 
   const inputStyle = {
     width: "100%", padding: "10px var(--space-md)", boxSizing: "border-box",
-    background: "#0f172a", border: "1px solid #374151", borderRadius: "var(--radius-sm)",
-    color: "#f9fafb", fontSize: "var(--font-sm)", outline: "none",
+    background: "var(--bg-base)", border: "1px solid var(--border-subtle)", borderRadius: "var(--radius-sm)",
+    color: "var(--text-primary)", fontSize: "var(--font-sm)", outline: "none",
     fontFamily: "'DM Sans', sans-serif"
   }
   const labelStyle = {
-    display: "block", fontSize: "var(--font-xs)", color: "#4b5563",
+    display: "block", fontSize: "var(--font-xs)", color: "var(--text-secondary)",
     textTransform: "uppercase", letterSpacing: "0.07em", marginBottom: "6px"
   }
 
   return (
     <div style={{
-      background: "#0f172a", border: "1px solid #1e3a5f",
+      background: "var(--bg-surface)", border: "1px solid var(--border-subtle)",
       borderRadius: "var(--radius-lg)", padding: "var(--space-lg)", marginBottom: "var(--space-md)"
     }}>
-      <p style={{ fontSize: "var(--font-sm)", fontWeight: 600, color: "#93c5fd", margin: "0 0 var(--space-md)" }}>
-        ✏ Edit Contact Details
+      <p style={{ fontSize: "var(--font-sm)", fontWeight: 600, color: "var(--text-primary)", margin: "0 0 var(--space-md)", display: "flex", alignItems: "center", gap: "8px" }}>
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg>
+        Edit Contact Details
       </p>
 
       {saveError && (
@@ -113,7 +114,7 @@ function ContactEditPanel({ profileId, initial, onSave, onCancel }) {
             onClick={() => set("allow_contact", !form.allow_contact)}
             style={{
               width: "40px", height: "22px", borderRadius: "var(--radius-full)", border: "none",
-              background: form.allow_contact ? "#f97316" : "#374151",
+              background: form.allow_contact ? "var(--accent-primary)" : "var(--bg-surface-secondary)",
               cursor: "pointer", position: "relative", flexShrink: 0,
               transition: "background 0.2s"
             }}
@@ -125,7 +126,7 @@ function ContactEditPanel({ profileId, initial, onSave, onCancel }) {
               background: "#fff", transition: "left 0.2s"
             }} />
           </button>
-          <span style={{ fontSize: "var(--font-sm)", color: "#9ca3af" }}>
+          <span style={{ fontSize: "var(--font-sm)", color: "var(--text-secondary)" }}>
             Allow employers to contact me
           </span>
         </div>
@@ -137,10 +138,13 @@ function ContactEditPanel({ profileId, initial, onSave, onCancel }) {
           disabled={saving}
           style={{
             flex: 1, padding: "10px", minHeight: "var(--touch-target)",
-            background: saving ? "#374151" : "linear-gradient(135deg, #f97316, #ea580c)",
+            background: saving ? "var(--bg-surface-secondary)" : "var(--accent-primary)",
             border: "none", borderRadius: "var(--radius-md)", color: "#fff",
-            fontSize: "var(--font-sm)", fontWeight: 600, cursor: saving ? "not-allowed" : "pointer"
+            fontSize: "var(--font-sm)", fontWeight: 600, cursor: saving ? "not-allowed" : "pointer",
+            transition: "background 0.2s"
           }}
+          onMouseOver={(e) => { if(!saving) e.target.style.background = "var(--accent-primary-hover)" }}
+          onMouseOut={(e) => { if(!saving) e.target.style.background = "var(--accent-primary)" }}
         >
           {saving ? "Saving…" : "Save Changes"}
         </button>
@@ -149,8 +153,8 @@ function ContactEditPanel({ profileId, initial, onSave, onCancel }) {
           disabled={saving}
           style={{
             padding: "10px 18px", minHeight: "var(--touch-target)", background: "transparent",
-            border: "1px solid #374151", borderRadius: "var(--radius-md)",
-            color: "#6b7280", fontSize: "var(--font-sm)", cursor: "pointer"
+            border: "1px solid var(--border-subtle)", borderRadius: "var(--radius-md)",
+            color: "var(--text-secondary)", fontSize: "var(--font-sm)", cursor: "pointer"
           }}
         >
           Cancel
@@ -198,13 +202,13 @@ export default function Profile() {
   }
 
   if (loading) return (
-    <div style={{ minHeight: "100vh", background: "#030712", display: "flex", alignItems: "center", justifyContent: "center" }}>
-      <p style={{ color: "#4b5563", fontFamily: "DM Sans, sans-serif" }}>Loading profile...</p>
+    <div style={{ minHeight: "100vh", background: "var(--bg-base)", display: "flex", alignItems: "center", justifyContent: "center" }}>
+      <p style={{ color: "var(--text-secondary)", fontFamily: "DM Sans, sans-serif" }}>Loading profile...</p>
     </div>
   )
 
   if (error) return (
-    <div style={{ minHeight: "100vh", background: "#030712", display: "flex", alignItems: "center", justifyContent: "center" }}>
+    <div style={{ minHeight: "100vh", background: "var(--bg-base)", display: "flex", alignItems: "center", justifyContent: "center" }}>
       <div style={{ background: "#2d0a0a", border: "1px solid #7f1d1d", borderRadius: "var(--radius-md)", padding: "var(--space-md) var(--space-lg)", color: "#fca5a5", fontFamily: "DM Sans, sans-serif" }}>
         ⚠ {error}
       </div>
@@ -212,8 +216,8 @@ export default function Profile() {
   )
 
   if (!profile) return (
-    <div style={{ minHeight: "100vh", background: "#030712", display: "flex", alignItems: "center", justifyContent: "center" }}>
-      <p style={{ color: "#4b5563", fontFamily: "DM Sans, sans-serif" }}>Profile not found.</p>
+    <div style={{ minHeight: "100vh", background: "var(--bg-base)", display: "flex", alignItems: "center", justifyContent: "center" }}>
+      <p style={{ color: "var(--text-secondary)", fontFamily: "DM Sans, sans-serif" }}>Profile not found.</p>
     </div>
   )
 
@@ -224,7 +228,7 @@ export default function Profile() {
 
   return (
     <div style={{
-      minHeight: "100vh", background: "#030712", color: "#f9fafb",
+      minHeight: "100vh", background: "var(--bg-base)", color: "var(--text-primary)",
       fontFamily: "'DM Sans', sans-serif", padding: "0 16px 48px"
     }}>
       <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet" />
@@ -233,13 +237,19 @@ export default function Profile() {
         {/* Nav */}
         <div style={{
           display: "flex", alignItems: "center", justifyContent: "space-between",
-          padding: "var(--space-lg) 0", borderBottom: "1px solid #1e293b", marginBottom: "var(--space-xl)"
+          padding: "var(--space-lg) 0", borderBottom: "1px solid var(--border-subtle)", marginBottom: "var(--space-xl)"
         }}>
           <div
             style={{ display: "flex", alignItems: "center", gap: "var(--space-sm)", cursor: "pointer" }}
             onClick={() => navigate(user ? "/dashboard" : "/")}
           >
-            <span>🎙</span>
+            <div style={{
+              width: "28px", height: "28px", borderRadius: "var(--radius-sm)",
+              background: "var(--accent-primary)",
+              display: "flex", alignItems: "center", justifyContent: "center"
+            }}>
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#ffffff" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" x2="12" y1="19" y2="22"/><line x1="8" x2="16" y1="22" y2="22"/></svg>
+            </div>
             <span style={{ fontWeight: 600 }}>SkillBridge</span>
           </div>
 
@@ -249,20 +259,33 @@ export default function Profile() {
                 onClick={() => setEditMode(true)}
                 style={{
                   padding: "var(--space-sm) var(--space-md)", minHeight: "var(--touch-target)", background: "transparent",
-                  border: "1px solid #1e3a5f", borderRadius: "var(--radius-sm)",
-                  color: "#93c5fd", fontSize: "var(--font-sm)", cursor: "pointer"
+                  border: "1px solid var(--border-subtle)", borderRadius: "var(--radius-sm)",
+                  color: "var(--text-primary)", fontSize: "var(--font-sm)", cursor: "pointer",
+                  display: "flex", alignItems: "center", gap: "6px"
                 }}
               >
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg>
                 Edit Contact
               </button>
             )}
             <button onClick={copyLink} style={{
               padding: "var(--space-sm) var(--space-md)", minHeight: "var(--touch-target)", background: copied ? "#052e16" : "transparent",
-              border: `1px solid ${copied ? "#166534" : "#1e293b"}`,
-              borderRadius: "var(--radius-sm)", color: copied ? "#4ade80" : "#6b7280",
-              fontSize: "var(--font-sm)", cursor: "pointer", transition: "all 0.2s"
+              border: `1px solid ${copied ? "#166534" : "var(--border-subtle)"}`,
+              borderRadius: "var(--radius-sm)", color: copied ? "#4ade80" : "var(--text-muted)",
+              fontSize: "var(--font-sm)", cursor: "pointer", transition: "all 0.2s",
+              display: "flex", alignItems: "center", gap: "6px"
             }}>
-              {copied ? "✓ Copied" : "Share Profile"}
+              {copied ? (
+                <>
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+                  Copied
+                </>
+              ) : (
+                <>
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
+                  Share Profile
+                </>
+              )}
             </button>
           </div>
         </div>
@@ -277,113 +300,125 @@ export default function Profile() {
           />
         )}
 
-        {/* Profile Header */}
-        <div style={{
-          background: "#0f172a", border: "1px solid #1e293b",
-          borderRadius: "var(--radius-xl)", padding: "var(--space-lg)", marginBottom: "var(--space-md)"
-        }}>
-          <div style={{ display: "flex", alignItems: "center", gap: "14px", marginBottom: "var(--space-md)" }}>
+        {/* Profile Header & Summary */}
+        <div style={{ marginBottom: "32px", paddingBottom: "32px", borderBottom: "1px solid var(--border-subtle)" }}>
+          <div style={{ display: "flex", alignItems: "flex-start", gap: "16px", marginBottom: "20px" }}>
             <div style={{
-              width: "52px", height: "52px", borderRadius: "50%",
-              background: "linear-gradient(135deg, #1d4ed8, #7c3aed)",
+              width: "64px", height: "64px", borderRadius: "var(--radius-sm)",
+              background: "var(--accent-primary)", color: "#fff",
               display: "flex", alignItems: "center", justifyContent: "center",
-              fontSize: "var(--font-xl)", flexShrink: 0
+              flexShrink: 0
             }}>
-              {domains[0]?.[0] || "👤"}
+              <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
             </div>
-            <div>
-              <div style={{ display: "flex", alignItems: "center", gap: "var(--space-sm)", flexWrap: "wrap", marginBottom: "4px" }}>
-                <h1 style={{ fontSize: "var(--font-xl)", fontWeight: 600, margin: 0, color: "#f9fafb" }}>
-                  {profile.name || "Skilled Professional"}
-                </h1>
+            <div style={{ flex: 1, minWidth: 0 }}>
+              <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", gap: "10px", marginBottom: "4px" }}>
+                <div>
+                  <h1 style={{ fontSize: "24px", fontWeight: 700, margin: 0, color: "var(--text-primary)", lineHeight: 1.2 }}>
+                    {profile.name || "Skilled Professional"}
+                  </h1>
+                  <p style={{ fontSize: "16px", color: "var(--text-secondary)", margin: "4px 0 0", fontWeight: 500 }}>
+                    {domains[0] || "Professional Worker"}
+                  </p>
+                </div>
+                <span style={{
+                  fontSize: "11px", padding: "4px 10px", borderRadius: "var(--radius-full)",
+                  background: "var(--bg-surface-secondary)", color: "var(--text-primary)", border: "1px solid var(--border-subtle)",
+                  display: "inline-flex", alignItems: "center", gap: "4px", flexShrink: 0
+                }}>
+                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+                  Voice Verified
+                </span>
+              </div>
+
+              <div style={{ display: "flex", alignItems: "center", gap: "16px", flexWrap: "wrap", marginTop: "12px" }}>
+                {profile.city && (
+                  <span style={{ display: "flex", alignItems: "center", gap: "6px", fontSize: "14px", color: "var(--text-secondary)" }}>
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></svg>
+                    {profile.city}
+                  </span>
+                )}
+                {profile.years_experience?.total && (
+                  <span style={{ display: "flex", alignItems: "center", gap: "6px", fontSize: "14px", color: "var(--text-secondary)" }}>
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                    {profile.years_experience.total} yrs exp
+                  </span>
+                )}
                 {profile.age && (
-                  <span style={{ fontSize: "var(--font-xs)", padding: "2px var(--space-sm)", background: "#1f2937", borderRadius: "var(--radius-full)", color: "#d1d5db" }}>
-                    {profile.age} yrs
+                  <span style={{ fontSize: "14px", color: "var(--text-secondary)" }}>
+                    {profile.age} years old
                   </span>
                 )}
                 {profile.gender && (
-                  <span style={{ fontSize: "var(--font-xs)", padding: "2px var(--space-sm)", background: "#1f2937", borderRadius: "var(--radius-full)", color: "#d1d5db" }}>
-                    {profile.gender}
-                  </span>
-                )}
-                {profile.city && (
-                  <span style={{ fontSize: "var(--font-xs)", padding: "2px var(--space-sm)", background: "#1f2937", borderRadius: "var(--radius-full)", color: "#d1d5db" }}>
-                    📍 {profile.city}
+                  <span style={{ fontSize: "14px", color: "var(--text-secondary)" }}>
+                    • {profile.gender}
                   </span>
                 )}
               </div>
-              <p style={{ fontSize: "var(--font-sm)", color: "#9ca3af", margin: "0 0 4px", fontWeight: 500 }}>
-                {domains[0] || "Professional Worker"}
-              </p>
-              <p style={{ fontSize: "var(--font-sm)", color: "#6b7280", margin: 0 }}>
-                {profile.years_experience?.total
-                  ? `${profile.years_experience.total} years experience`
-                  : "Experienced professional"}
-              </p>
             </div>
           </div>
 
-          <p style={{ fontSize: "var(--font-sm)", color: "#9ca3af", lineHeight: 1.7, margin: 0 }}>
+          <p style={{ fontSize: "15px", color: "var(--text-primary)", lineHeight: 1.6, margin: 0 }}>
             {profile.generated_summary}
           </p>
         </div>
 
-        {/* Skills */}
-        {skills.length > 0 && (
-          <div style={{
-            background: "#0f172a", border: "1px solid #1e293b",
-            borderRadius: "var(--radius-lg)", padding: "var(--space-lg)", marginBottom: "var(--space-md)"
-          }}>
-            <p style={{ fontSize: "var(--font-xs)", color: "#4b5563", margin: "0 0 12px", textTransform: "uppercase", letterSpacing: "0.08em" }}>
-              Skills
-            </p>
-            <div style={{ display: "flex", flexWrap: "wrap", gap: "var(--space-sm)" }}>
-              {skills.map((s, i) => (
-                <span key={i} style={{
-                  padding: "5px var(--space-md)", borderRadius: "var(--radius-full)", fontSize: "var(--font-sm)",
-                  background: "#1e3a5f", color: "#93c5fd", border: "1px solid #1d4ed8"
-                }}>{s}</span>
-              ))}
+        {/* Details Grid (Skills & Tools) */}
+        <div style={{ display: "flex", flexDirection: "column", gap: "32px", marginBottom: "40px" }}>
+          {/* Skills */}
+          {skills.length > 0 && (
+            <div>
+              <h2 style={{ fontSize: "14px", color: "var(--text-primary)", margin: "0 0 12px", textTransform: "uppercase", letterSpacing: "0.08em", fontWeight: 600 }}>
+                Skills
+              </h2>
+              <div style={{ display: "flex", flexWrap: "wrap", gap: "8px" }}>
+                {skills.map((s, i) => (
+                  <span key={i} style={{
+                    padding: "6px 12px", borderRadius: "var(--radius-sm)", fontSize: "14px",
+                    background: "var(--bg-surface)", color: "var(--text-primary)", border: "1px solid var(--border-subtle)"
+                  }}>{s}</span>
+                ))}
+              </div>
             </div>
-          </div>
-        )}
+          )}
 
-        {/* Tools */}
-        {tools.length > 0 && (
-          <div style={{
-            background: "#0f172a", border: "1px solid #1e293b",
-            borderRadius: "var(--radius-lg)", padding: "var(--space-lg)", marginBottom: "var(--space-md)"
-          }}>
-            <p style={{ fontSize: "var(--font-xs)", color: "#4b5563", margin: "0 0 12px", textTransform: "uppercase", letterSpacing: "0.08em" }}>
-              Tools & Equipment
-            </p>
-            <div style={{ display: "flex", flexWrap: "wrap", gap: "var(--space-sm)" }}>
-              {tools.map((t, i) => (
-                <span key={i} style={{
-                  padding: "5px var(--space-md)", borderRadius: "var(--radius-full)", fontSize: "var(--font-sm)",
-                  background: "#1a2e1a", color: "#86efac", border: "1px solid #166534"
-                }}>{t}</span>
-              ))}
+          {/* Tools */}
+          {tools.length > 0 && (
+            <div>
+              <h2 style={{ fontSize: "14px", color: "var(--text-primary)", margin: "0 0 12px", textTransform: "uppercase", letterSpacing: "0.08em", fontWeight: 600 }}>
+                Tools & Equipment
+              </h2>
+              <div style={{ display: "flex", flexWrap: "wrap", gap: "8px" }}>
+                {tools.map((t, i) => (
+                  <span key={i} style={{
+                    padding: "6px 12px", borderRadius: "var(--radius-sm)", fontSize: "14px",
+                    background: "var(--bg-surface)", color: "var(--text-primary)", border: "1px solid var(--border-subtle)"
+                  }}>{t}</span>
+                ))}
+              </div>
             </div>
-          </div>
-        )}
+          )}
+        </div>
 
         {/* CTA — only for non-owners / public visitors */}
         {!isOwner && (
           <div style={{
-            background: "#0c1a2e", border: "1px solid #1e3a5f",
+            background: "var(--bg-surface)", border: "1px solid var(--border-subtle)",
             borderRadius: "var(--radius-lg)", padding: "var(--space-lg)", textAlign: "center", marginTop: "var(--space-sm)"
           }}>
-            <p style={{ fontSize: "var(--font-sm)", color: "#93c5fd", margin: "0 0 var(--space-md)" }}>
+            <p style={{ fontSize: "var(--font-sm)", color: "var(--text-primary)", margin: "0 0 var(--space-md)" }}>
               Want your own profile like this?
             </p>
             <button
               onClick={() => navigate("/login")}
+              onMouseOver={(e) => e.target.style.background = "var(--accent-primary-hover)"}
+              onMouseOut={(e) => e.target.style.background = "var(--accent-primary)"}
               style={{
                 padding: "10px var(--space-lg)", minHeight: "var(--touch-target)",
-                background: "linear-gradient(135deg, #f97316, #ea580c)",
+                background: "var(--accent-primary)",
                 border: "none", borderRadius: "var(--radius-md)", color: "#fff",
-                fontSize: "var(--font-sm)", fontWeight: 600, cursor: "pointer"
+                fontSize: "var(--font-sm)", fontWeight: 600, cursor: "pointer",
+                transition: "background 0.2s"
               }}
             >
               Create Free Profile →
@@ -396,11 +431,14 @@ export default function Profile() {
           <div style={{ display: "flex", gap: "10px", marginTop: "var(--space-md)" }}>
             <button
               onClick={() => navigate(`/jobs/${id}`)}
+              onMouseOver={(e) => e.target.style.background = "var(--accent-primary-hover)"}
+              onMouseOut={(e) => e.target.style.background = "var(--accent-primary)"}
               style={{
                 flex: 1, padding: "12px", minHeight: "var(--touch-target)",
-                background: "linear-gradient(135deg, #f97316, #ea580c)",
+                background: "var(--accent-primary)",
                 border: "none", borderRadius: "var(--radius-md)", color: "#fff",
-                fontSize: "var(--font-sm)", fontWeight: 600, cursor: "pointer"
+                fontSize: "var(--font-sm)", fontWeight: 600, cursor: "pointer",
+                transition: "background 0.2s"
               }}
             >
               Find Matching Jobs →
@@ -409,8 +447,8 @@ export default function Profile() {
               onClick={() => navigate("/dashboard")}
               style={{
                 padding: "12px 18px", minHeight: "var(--touch-target)", background: "transparent",
-                border: "1px solid #1e293b", borderRadius: "var(--radius-md)",
-                color: "#6b7280", fontSize: "var(--font-sm)", cursor: "pointer"
+                border: "1px solid var(--border-subtle)", borderRadius: "var(--radius-md)",
+                color: "var(--text-secondary)", fontSize: "var(--font-sm)", cursor: "pointer"
               }}
             >
               Dashboard

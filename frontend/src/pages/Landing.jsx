@@ -7,10 +7,10 @@ export default function Landing() {
 
   return (
     <div style={{
-      minHeight: "100vh", background: "#030712", color: "#f9fafb",
+      minHeight: "100vh", background: "var(--bg-base)", color: "var(--text-primary)",
       fontFamily: "'DM Sans', sans-serif", padding: "0 16px"
     }}>
-      <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600&family=DM+Serif+Display&display=swap" rel="stylesheet" />
+      <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" />
 
       <div style={{ maxWidth: "480px", margin: "0 auto" }}>
         {/* Nav */}
@@ -19,15 +19,15 @@ export default function Landing() {
           padding: "var(--space-lg) 0"
         }}>
           <div style={{ display: "flex", alignItems: "center", gap: "var(--space-sm)" }}>
-            <span style={{ fontSize: "var(--font-lg)" }}>🎙</span>
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--accent-primary)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" x2="12" y1="19" y2="22"/><line x1="8" x2="16" y1="22" y2="22"/></svg>
             <span style={{ fontWeight: 600 }}>SkillBridge</span>
           </div>
           <button
             onClick={() => navigate(user ? "/dashboard" : "/login")}
             style={{
               padding: "var(--space-sm) var(--space-md)", minHeight: "var(--touch-target)", background: "transparent",
-              border: "1px solid #1e293b", borderRadius: "var(--radius-sm)",
-              color: "#9ca3af", fontSize: "var(--font-sm)", cursor: "pointer"
+              border: "1px solid var(--border-subtle)", borderRadius: "var(--radius-sm)",
+              color: "var(--text-secondary)", fontSize: "var(--font-sm)", cursor: "pointer"
             }}
           >
             {user ? "Dashboard" : "Login"}
@@ -38,8 +38,8 @@ export default function Landing() {
         <div style={{ paddingTop: "60px", paddingBottom: "var(--space-xl)" }}>
           <div style={{
             display: "inline-block", padding: "4px 12px",
-            background: "#0c1a2e", border: "1px solid #1e3a5f",
-            borderRadius: "999px", fontSize: "12px", color: "#60a5fa",
+            background: "var(--bg-surface)", border: "1px solid var(--border-subtle)",
+            borderRadius: "999px", fontSize: "12px", color: "var(--text-secondary)",
             marginBottom: "20px"
           }}>
             Built for India's 450M informal workers
@@ -47,58 +47,71 @@ export default function Landing() {
 
           <h1 style={{
             fontSize: "36px", fontWeight: 700,
-            fontFamily: "'DM Serif Display', serif",
             lineHeight: 1.2, margin: "0 0 16px",
             letterSpacing: "-0.02em"
           }}>
             Your skills deserve<br />
-            <span style={{ color: "#f97316" }}>a proper profile</span>
+            <span style={{ color: "var(--accent-primary)" }}>a proper profile</span>
           </h1>
 
-          <p style={{ fontSize: "16px", color: "#6b7280", lineHeight: 1.7, margin: "0 0 36px" }}>
+          <p style={{ fontSize: "16px", color: "var(--text-secondary)", lineHeight: 1.7, margin: "0 0 36px" }}>
             Speak in Hindi, English, or your own language. We turn your experience into a professional profile — no typing, no forms.
           </p>
 
           <button
             onClick={() => navigate(user ? "/record" : "/login")}
+            onMouseOver={(e) => e.target.style.background = "var(--accent-primary-hover)"}
+            onMouseOut={(e) => e.target.style.background = "var(--accent-primary)"}
             style={{
               width: "100%", padding: "var(--space-md)", minHeight: "var(--touch-target)",
-              background: "linear-gradient(135deg, #f97316, #ea580c)",
+              background: "var(--accent-primary)",
               border: "none", borderRadius: "var(--radius-md)", color: "#fff",
               fontSize: "var(--font-base)", fontWeight: 600, cursor: "pointer",
-              marginBottom: "var(--space-sm)"
+              marginBottom: "var(--space-sm)", transition: "background 0.2s"
             }}
           >
             Create Your Profile — Free
           </button>
-          <p style={{ fontSize: "12px", color: "#374151", textAlign: "center", margin: 0 }}>
+          <p style={{ fontSize: "12px", color: "var(--text-muted)", textAlign: "center", margin: 0 }}>
             No email needed. Just sign in with Google.
           </p>
         </div>
 
         {/* How it works */}
         <div style={{ paddingBottom: "48px" }}>
-          <p style={{ fontSize: "12px", color: "#4b5563", textTransform: "uppercase", letterSpacing: "0.08em", marginBottom: "20px" }}>
+          <p style={{ fontSize: "12px", color: "var(--text-secondary)", textTransform: "uppercase", letterSpacing: "0.08em", marginBottom: "20px" }}>
             How it works
           </p>
           {[
-            { icon: "🎙", title: "Speak your experience", desc: "Talk about your work in any language for 1-2 minutes" },
-            { icon: "🤖", title: "AI extracts your skills", desc: "We identify skills, experience, tools and build your profile" },
-            { icon: "📋", title: "Share with employers", desc: "Get a professional profile link you can send to anyone" }
+            { 
+              icon: <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" x2="12" y1="19" y2="22"/><line x1="8" x2="16" y1="22" y2="22"/></svg>, 
+              title: "Speak your experience", 
+              desc: "Talk about your work in any language for 1-2 minutes" 
+            },
+            { 
+              icon: <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><line x1="10" y1="9" x2="8" y2="9"/></svg>, 
+              title: "We organize your skills", 
+              desc: "Our system identifies your skills, tools, and experience from your voice" 
+            },
+            { 
+              icon: <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>, 
+              title: "Share with employers", 
+              desc: "Get a professional profile link you can send directly to contractors" 
+            }
           ].map((step, i) => (
             <div key={i} style={{
               display: "flex", gap: "16px", alignItems: "flex-start",
               marginBottom: "20px"
             }}>
               <div style={{
-                width: "40px", height: "40px", borderRadius: "10px",
-                background: "#0f172a", border: "1px solid #1e293b",
+                width: "40px", height: "40px", borderRadius: "var(--radius-sm)",
+                background: "var(--bg-surface)", border: "1px solid var(--border-subtle)",
                 display: "flex", alignItems: "center", justifyContent: "center",
-                fontSize: "18px", flexShrink: 0
+                color: "var(--text-primary)", flexShrink: 0
               }}>{step.icon}</div>
               <div>
-                <p style={{ fontSize: "14px", fontWeight: 500, color: "#e5e7eb", margin: "0 0 4px" }}>{step.title}</p>
-                <p style={{ fontSize: "13px", color: "#4b5563", margin: 0 }}>{step.desc}</p>
+                <p style={{ fontSize: "var(--font-sm)", fontWeight: 500, color: "var(--text-primary)", margin: "0 0 4px" }}>{step.title}</p>
+                <p style={{ fontSize: "13px", color: "var(--text-secondary)", margin: 0 }}>{step.desc}</p>
               </div>
             </div>
           ))}

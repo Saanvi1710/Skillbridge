@@ -12,7 +12,7 @@ export default function Login() {
 
   return (
     <div style={{
-      minHeight: "100vh", background: "#030712", display: "flex",
+      minHeight: "100vh", background: "var(--bg-base)", display: "flex",
       alignItems: "center", justifyContent: "center", padding: "16px",
       fontFamily: "'DM Sans', sans-serif"
     }}>
@@ -22,22 +22,24 @@ export default function Login() {
         {/* Logo */}
         <div style={{ textAlign: "center", marginBottom: "40px" }}>
           <div style={{
-            width: "56px", height: "56px", borderRadius: "14px",
-            background: "linear-gradient(135deg, #f97316, #ea580c)",
+            width: "56px", height: "56px", borderRadius: "var(--radius-md)",
+            background: "var(--accent-primary)",
             display: "flex", alignItems: "center", justifyContent: "center",
-            fontSize: "26px", margin: "0 auto 16px"
-          }}>🎙</div>
-          <h1 style={{ fontSize: "24px", fontWeight: 600, color: "#f9fafb", margin: "0 0 8px" }}>
+            margin: "0 auto 16px"
+          }}>
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#ffffff" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" x2="12" y1="19" y2="22"/><line x1="8" x2="16" y1="22" y2="22"/></svg>
+          </div>
+          <h1 style={{ fontSize: "24px", fontWeight: 600, color: "var(--text-primary)", margin: "0 0 8px" }}>
             Welcome to SkillBridge
           </h1>
-          <p style={{ fontSize: "14px", color: "#6b7280", margin: 0, lineHeight: 1.6 }}>
-            Turn your voice into a professional profile in minutes
+          <p style={{ fontSize: "14px", color: "var(--text-secondary)", margin: 0, lineHeight: 1.6 }}>
+            Create your professional worker profile in minutes
           </p>
         </div>
 
         {/* Card */}
         <div style={{
-          background: "#0f172a", border: "1px solid #1e293b",
+          background: "var(--bg-surface)", border: "1px solid var(--border-subtle)",
           borderRadius: "var(--radius-lg)", padding: "28px"
         }}>
           <button
@@ -60,7 +62,7 @@ export default function Login() {
             Continue with Google
           </button>
 
-          <p style={{ fontSize: "12px", color: "#374151", textAlign: "center", margin: "16px 0 0" }}>
+          <p style={{ fontSize: "12px", color: "var(--text-muted)", textAlign: "center", margin: "16px 0 0" }}>
             Free to use · No credit card required
           </p>
         </div>
@@ -69,7 +71,7 @@ export default function Login() {
         <p style={{ textAlign: "center", marginTop: "var(--space-lg)" }}>
           <span
             onClick={() => navigate("/")}
-            style={{ fontSize: "var(--font-sm)", color: "#4b5563", cursor: "pointer", minHeight: "var(--touch-target)", display: "inline-flex", alignItems: "center" }}
+            style={{ fontSize: "var(--font-sm)", color: "var(--text-secondary)", cursor: "pointer", minHeight: "var(--touch-target)", display: "inline-flex", alignItems: "center" }}
           >
             ← Back to home
           </span>

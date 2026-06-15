@@ -3,6 +3,19 @@
 @tailwind utilities;
 
 :root {
+  /* Color Scale - Industrial Professional (Cobalt & Slate) */
+  --bg-base: #111827;
+  --bg-surface: #1f2937;
+  --bg-surface-secondary: #374151;
+  --border-subtle: #374151;
+  
+  --accent-primary: #2563eb;
+  --accent-primary-hover: #1d4ed8;
+  
+  --text-primary: #f9fafb;
+  --text-secondary: #9ca3af;
+  --text-muted: #6b7280;
+
   /* Typography Scale */
   --font-xs: 11px;
   --font-sm: 13px;
@@ -18,11 +31,11 @@
   --space-lg: 24px;
   --space-xl: 32px;
 
-  /* Radii Scale */
-  --radius-sm: 8px;
-  --radius-md: 12px;
-  --radius-lg: 16px;
-  --radius-xl: 20px;
+  /* Radii Scale (Reduced for professional feel) */
+  --radius-sm: 4px;
+  --radius-md: 6px;
+  --radius-lg: 8px;
+  --radius-xl: 10px;
   --radius-full: 9999px;
   
   /* Touch target helpers */

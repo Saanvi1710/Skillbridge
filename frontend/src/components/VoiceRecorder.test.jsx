@@ -65,7 +65,7 @@ describe('VoiceRecorder', () => {
     fireEvent.click(recordBtn)
     
     // Wait for it to start recording
-    await waitFor(() => expect(screen.getByText('⏹')).toBeInTheDocument())
+    await waitFor(() => expect(screen.getByText(/Recording/i)).toBeInTheDocument())
     
     // Stop recording
     fireEvent.click(screen.getByRole('button'))
@@ -87,7 +87,7 @@ describe('VoiceRecorder', () => {
     const recordBtn = screen.getByRole('button')
     fireEvent.click(recordBtn)
     
-    await waitFor(() => expect(screen.getByText('⏹')).toBeInTheDocument())
+    await waitFor(() => expect(screen.getByText(/Recording/i)).toBeInTheDocument())
     
     fireEvent.click(screen.getByRole('button'))
 
@@ -114,7 +114,7 @@ describe('VoiceRecorder', () => {
     // Start & Stop
     const recordBtn = screen.getByRole('button')
     fireEvent.click(recordBtn)
-    await waitFor(() => expect(screen.getByText('⏹')).toBeInTheDocument())
+    await waitFor(() => expect(screen.getByText(/Recording/i)).toBeInTheDocument())
     fireEvent.click(screen.getByRole('button'))
 
     // Wait for done state
