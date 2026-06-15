@@ -143,7 +143,8 @@ export default function Dashboard() {
           min-width: 0;
           display: flex;
           align-items: center;
-          gap: 24px;
+          flex-wrap: wrap;
+          gap: 16px;
         }
         .profile-identity {
           min-width: 140px;
@@ -171,7 +172,7 @@ export default function Dashboard() {
           margin-left: 16px;
         }
         
-        @media (max-width: 640px) {
+        @media (max-width: 800px) {
           .profile-list-container {
             background: transparent;
             border: none;
@@ -211,7 +212,7 @@ export default function Dashboard() {
 
       {/* Nav */}
       <div style={{
-        maxWidth: "480px", margin: "0 auto",
+        maxWidth: "800px", margin: "0 auto",
         display: "flex", alignItems: "center", justifyContent: "space-between",
         padding: "var(--space-lg) 0", borderBottom: "1px solid var(--border-subtle)", marginBottom: "var(--space-xl)"
       }}>
@@ -234,7 +235,7 @@ export default function Dashboard() {
         </button>
       </div>
 
-      <div style={{ maxWidth: "480px", margin: "0 auto" }}>
+      <div style={{ maxWidth: "800px", margin: "0 auto" }}>
         {/* Header */}
         <div style={{ marginBottom: "var(--space-lg)" }}>
           <p style={{ fontSize: "var(--font-xs)", color: "var(--text-secondary)", margin: "0 0 4px" }}>Welcome back</p>
