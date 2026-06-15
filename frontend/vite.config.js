@@ -10,7 +10,7 @@ export default defineConfig({
     setupFiles: './src/setupTests.js',
     env: {
       VITE_SUPABASE_URL: 'http://localhost:54321',
-      VITE_SUPABASE_ANON_KEY: 'test-key'
+      VITE_SUPABASE_KEY: 'test-key'
     },
     coverage: {
       provider: 'v8',
