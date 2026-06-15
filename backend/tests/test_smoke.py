@@ -1,5 +1,3 @@
-from main import app
-
 def test_app_starts(unauthed_client):
     pass
 
