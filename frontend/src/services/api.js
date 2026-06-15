@@ -1,6 +1,6 @@
 import { supabase } from "./supabase"
 
-const BASE_URL = import.meta.env.VITE_API_URL
+const BASE_URL = import.meta.env.VITE_API_URL || "https://skillbridge-pvfi.onrender.com"
 
 /**
  * Authenticated fetch wrapper — attaches the Supabase JWT
