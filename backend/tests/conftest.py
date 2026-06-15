@@ -8,7 +8,8 @@ sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")
 
 os.environ["GROQ_API_KEY"] = "test_groq_key"
 os.environ["SUPABASE_URL"] = "http://localhost:54321"
-os.environ["SUPABASE_SERVICE_KEY"] = "test_service_key"
+# Create a fake JWT to satisfy the supabase python client format checks
+os.environ["SUPABASE_SERVICE_KEY"] = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSJ9.fake_signature"
 os.environ["SUPABASE_JWT_SECRET"] = "test_jwt_secret"
 
 from main import app
